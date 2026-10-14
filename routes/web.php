@@ -1,12 +1,15 @@
+
 <?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PortfolioController;
 
+// Public Home Page
 Route::get('/', function () {
-    return redirect()->route('portfolio.create');
-});
+    return view('welcome');
+})->name('home');
 
+// Public Portfolio Routes
 Route::get('/portfolio/create', [PortfolioController::class, 'create'])
     ->name('portfolio.create');
 
