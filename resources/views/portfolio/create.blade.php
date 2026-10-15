@@ -80,8 +80,6 @@
             margin: 0 auto 36px;
         }
         .logo-group { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { width: 40px; height: 40px; border: 1px solid var(--card-border); border-radius: 50%; display: grid; place-items: center; background: var(--card-bg); backdrop-filter: blur(10px); }
-        .logo-icon svg { width: 21px; height: 21px; fill: var(--text-color); }
         .logo-text { font: 700 1.7rem 'Sansation', sans-serif; letter-spacing: -.5px; }
         .theme-toggle-btn{width:44px;height:44px;border:1px solid var(--card-border);border-radius:50%;display:grid;place-items:center;background:var(--card-bg);color:var(--text-color);cursor:pointer}.theme-toggle-btn svg{width:20px;height:20px;fill:currentColor}
         .hero-text{text-align:center;margin:0 auto 34px;max-width:820px}.hero-text h1{font:400 clamp(1.8rem,5vw,2.5rem) 'Mako',sans-serif;letter-spacing:-.5px;margin-bottom:10px;text-transform:uppercase}.hero-text p{font:1rem 'Lora',serif;color:var(--subtext-color);line-height:1.6}
@@ -123,7 +121,6 @@
         body { background:var(--bg-color); color:var(--text-color); font-family:'Lora',serif; }
         .container, .form-wrapper, .hero-text, header { position:relative; z-index:2; }
         header { max-width:1280px; padding:16px 22px; border:2px solid var(--input-focus); border-radius:8px; background:var(--card-bg); box-shadow:0 0 15px rgba(56,189,248,.16); backdrop-filter:blur(12px); }
-        .logo-icon { border-color:var(--input-focus); color:var(--input-focus); }
         .logo-text { color:var(--input-focus); }
         .hero-text h1 { font-family:'Mako',sans-serif; }
         .form-card { border-color:var(--card-border); background:var(--card-bg); box-shadow:0 16px 48px rgba(0,0,0,.2),0 0 18px rgba(56,189,248,.06); }
@@ -141,7 +138,6 @@
     <div class="container">
         <header>
             <div class="logo-group">
-                <div class="logo-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14a6 6 0 100 12 6 6 0 000-12z"/></svg></div>
                 <div class="logo-text">PortGen</div>
             </div>
             <button class="theme-toggle-btn" id="themeToggleBtn" type="button" onclick="toggleTheme()" title="Toggle light/dark theme" aria-label="Toggle light and dark theme"><svg id="themeIcon" viewBox="0 0 24 24"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zM11 1h2v4h-2zm0 18h2v4h-2zM1 11h4v2H1zm18 0h4v2h-4zM4.22 5.64l1.42-1.42 2.12 2.12-1.42 1.42zm12.02 12.02 1.42-1.42 2.12 2.12-1.42 1.42zm1.42-11.32 2.12-2.12 1.42 1.42-2.12 2.12zM4.22 19.07l2.12-2.12 1.42 1.42-2.12 2.12z"/></svg></button>
