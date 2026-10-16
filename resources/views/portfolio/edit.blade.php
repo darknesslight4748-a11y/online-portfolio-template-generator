@@ -443,6 +443,9 @@ html.light .action {
         <canvas id="bgCanvas">
         </canvas>
         @include('partials.portgen-navbar', ['sticky' => false])
+    @php
+        $returnToChooseTemplate = old('return_to', request('return_to')) === 'choose-template';
+    @endphp
     <main class="content w-full max-w-5xl mx-auto my-10 flex-1">
         <div class="mb-8">
             <p class="text-xs uppercase tracking-[.25em] text-indigo-400 font-bold mb-3">Portfolio Studio / Edit</p>
@@ -458,6 +461,7 @@ html.light .action {
         <form method="POST" action="{{ route('portfolio.update', $portfolio->id) }}" enctype="multipart/form-data" class="glass p-5 sm:p-8 space-y-8">
         @csrf
         @method('PUT')
+        <input type="hidden" name="return_to" value="{{ old('return_to', request('return_to')) }}">
         <section class="space-y-5">
             <h2 class="section-title flex items-center gap-3">
                 <i class="fa-regular fa-id-card text-indigo-400">
@@ -526,7 +530,7 @@ html.light .action {
                     </div>
                 </section>
                 <div class="flex flex-col-reverse sm:flex-row gap-3 justify-end border-t pt-6" style="border-color:var(--border)">
-                    <a href="{{ route('portfolio.show', $portfolio->id) }}" class="px-6 py-3 rounded-xl border text-center text-sm font-medium hover:bg-slate-500/10" style="border-color:var(--border);color:var(--sub)">Cancel</a>
+                    <a href="{{ $returnToChooseTemplate ? route('portfolio.choose-template', $portfolio->id) : route('portfolio.show', $portfolio->id) }}" class="px-6 py-3 rounded-xl border text-center text-sm font-medium hover:bg-slate-500/10" style="border-color:var(--border);color:var(--sub)">Cancel</a>
                     <button type="submit" class="action px-7 py-3 rounded-xl text-sm font-semibold">
                         <i class="fa-solid fa-floppy-disk mr-2">
                         </i>Save Changes</button>

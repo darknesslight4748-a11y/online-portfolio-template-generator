@@ -2017,6 +2017,120 @@ body {
  .mini-creative-header { flex-wrap:wrap; }
 }
 
+
+/* Template 3 preview — matched to the actual cream, lime, coral and peach design. */
+.pv-cre.mini-template3 {
+    display: block;
+    padding: 0;
+    background: #f8f5ef;
+    color: #242424;
+    border: 1px solid #e4ddd2;
+    border-radius: 7px;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+.mini-t3-nav { display:flex; justify-content:space-between; align-items:center; gap:6px; padding:7px 8px; border-bottom:1px solid #ded8ce; font-size:6px; }
+.mini-t3-nav strong { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:7px; font-weight:900; }
+.mini-t3-nav strong span { color:#ff5b35; }
+.mini-t3-nav small { color:#444; font-size:4px; font-weight:700; white-space:nowrap; }
+.mini-t3-hero { display:grid; grid-template-columns:1.12fr .88fr; align-items:center; gap:7px; padding:9px 8px; }
+.mini-t3-copy { min-width:0; }
+.mini-t3-tag { display:inline-block; padding:3px 5px; background:#d7f36b; border-radius:20px; font-size:4px; font-weight:800; transform:rotate(-2deg); }
+.mini-t3-copy > strong { display:block; margin-top:7px; font-size:14px; line-height:.98; letter-spacing:-.5px; overflow-wrap:anywhere; }
+.mini-t3-copy > strong em { color:#ff5b35; font-style:normal; }
+.mini-t3-copy p { margin-top:5px; color:#666; font-size:5px; line-height:1.4; }
+.mini-t3-actions { display:flex; flex-wrap:wrap; gap:3px; margin-top:6px; font-size:4px; }
+.mini-t3-actions b,.mini-t3-actions i { padding:4px 5px; border:1px solid #242424; background:#242424; color:white; border-radius:3px; font-style:normal; }
+.mini-t3-actions i { background:transparent; color:#242424; }
+.mini-t3-art { position:relative; min-width:0; padding:6px; background:#ffccba; border-radius:42% 42% 5px 5px; transform:rotate(2deg); }
+.mini-t3-photo { height:91px; display:grid; place-items:center; overflow:hidden; border:3px solid white; border-radius:42% 42% 5px 5px; background:#d7f36b; color:#242424; font-size:25px; font-weight:900; transform:rotate(-2deg); }
+.mini-t3-photo img { width:100%; height:100%; object-fit:cover; }
+.mini-t3-sticker { position:absolute; right:-4px; bottom:8px; padding:5px; background:#d7f36b; border:1px solid #242424; border-radius:50%; font-size:4px; text-align:center; transform:rotate(8deg); }
+.mini-t3-about { margin:3px 8px 8px; padding:9px; border:1.5px solid #242424; border-radius:5px; background:#d7f36b; }
+.mini-t3-about > strong,.mini-t3-section-title { display:flex; justify-content:space-between; gap:6px; font-size:5px; letter-spacing:.4px; }
+.mini-t3-about > b { display:block; margin:5px 0; font-size:10px; }
+.mini-t3-about > span,.mini-t3-details span,.mini-t3-projects span { display:block; width:88%; height:3px; margin-top:3px; border-radius:2px; background:rgba(36,36,36,.18); }
+.mini-t3-section-title { margin:8px 8px 4px; font-weight:900; }
+.mini-t3-section-title small { color:#777; font-size:4px; }
+.mini-t3-projects { display:grid; grid-template-columns:1fr 1fr; gap:6px; padding:0 8px; }
+.mini-t3-projects > div { min-height:46px; padding:7px; border:1.5px solid #242424; border-radius:5px; background:#ffccba; transform:rotate(-1deg); }
+.mini-t3-projects > div:nth-child(even) { background:#dce7ff; transform:rotate(1deg); }
+.mini-t3-projects b { display:block; color:#ff5b35; font-size:5px; }
+.mini-t3-projects strong { display:block; margin-top:4px; font-size:6px; }
+.mini-t3-details { display:grid; grid-template-columns:1fr 1fr; gap:6px; padding:8px; }
+.mini-t3-details > div { min-width:0; padding:8px; border:1.5px solid #242424; border-radius:5px; background:white; font-size:5px; font-weight:800; }
+.mini-t3-skills { display:flex; flex-wrap:wrap; gap:4px; padding:0 8px 8px; }
+.mini-t3-skills b { padding:4px 6px; border:1px solid #242424; border-radius:4px; background:#d7f36b; font-size:5px; }
+.mini-t3-skills b:nth-child(even) { background:#ffccba; }
+.mini-t3-share { display:flex; justify-content:space-between; align-items:center; gap:5px; padding:8px; background:#242424; color:white; font-size:6px; font-weight:700; }
+.mini-t3-share span { font-size:4px; font-weight:400; }
+
+.pp-cre { padding:0 !important; background:#f8f5ef !important; color:#242424 !important; font-family:'Segoe UI',Arial,sans-serif !important; line-height:1.5 !important; }
+.pp-cre .ct3-page { max-width:1200px; margin:0 auto; padding:0 22px 20px; background:#f8f5ef; color:#242424; }
+.pp-cre .ct3-nav { display:flex; justify-content:space-between; align-items:center; gap:18px; padding:17px 0 20px; border-bottom:1px solid #ded8ce; }
+.pp-cre .ct3-brand { color:#242424; font-size:clamp(13px,2vw,19px); font-weight:900; letter-spacing:.2px; }
+.pp-cre .ct3-brand span { color:#ff5b35; }
+.pp-cre .ct3-nav-links { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:clamp(8px,2vw,22px); font-size:10px; font-weight:800; }
+.pp-cre .ct3-hero { display:grid; grid-template-columns:1.12fr .9fr; gap:clamp(18px,4vw,44px); align-items:center; padding:48px 0 58px; }
+.pp-cre .ct3-hero-copy { min-width:0; }
+.pp-cre .ct3-tag { display:inline-block; padding:7px 13px; background:#d7f36b; border-radius:20px; font-size:11px; font-weight:800; transform:rotate(-2deg); }
+.pp-cre .ct3-hero-copy h1 { margin:19px 0 14px; color:#242424; font-size:clamp(32px,5vw,64px); line-height:1.02; letter-spacing:-.055em; overflow-wrap:anywhere; }
+.pp-cre .ct3-hero-copy h1 span { color:#ff5b35; }
+.pp-cre .ct3-hero-copy > p { max-width:530px; color:#666; font-size:12px; white-space:pre-line; overflow-wrap:anywhere; }
+.pp-cre .ct3-contact-row { display:flex; flex-wrap:wrap; gap:9px; margin-top:19px; }
+.pp-cre .ct3-button { display:inline-block; padding:10px 14px; border:2px solid #242424; border-radius:6px; background:#242424; color:#fff; font-size:11px; font-weight:800; }
+.pp-cre .ct3-button.outline { background:transparent; color:#242424; }
+.pp-cre .ct3-hero-copy .ct3-contact-line { margin-top:10px; font-size:11px; }
+.pp-cre .ct3-portrait-area { position:relative; min-width:0; padding:17px; background:#ffccba; border-radius:48% 48% 12px 12px; transform:rotate(2deg); }
+.pp-cre .ct3-portrait { height:clamp(220px,32vw,360px); display:flex; align-items:center; justify-content:center; overflow:hidden; border:5px solid #fff; border-radius:48% 48% 12px 12px; background:#d7f36b; color:#242424; font-size:clamp(64px,9vw,100px); font-weight:900; transform:rotate(-2deg); }
+.pp-cre .ct3-portrait img { width:100%; height:100%; object-fit:cover; }
+.pp-cre .ct3-sticker { position:absolute; right:-10px; bottom:25px; padding:12px; border:2px solid #242424; border-radius:50%; background:#d7f36b; color:#242424; font-size:10px; font-weight:900; text-align:center; transform:rotate(9deg); }
+.pp-cre .ct3-section { padding:30px 0; scroll-margin-top:15px; }
+.pp-cre .ct3-section-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:19px; }
+.pp-cre .ct3-section-heading h2 { margin:0; color:#242424; font-size:clamp(20px,3vw,32px); letter-spacing:-.04em; }
+.pp-cre .ct3-section-heading p { margin:0; color:#777; font-size:9px; font-weight:800; text-align:right; letter-spacing:.5px; }
+.pp-cre .ct3-about-card { padding:clamp(18px,3vw,30px); border:2px solid #242424; border-radius:10px; background:#d7f36b; }
+.pp-cre .ct3-about-card h3 { margin:0 0 9px; font-size:clamp(17px,2.4vw,24px); color:#242424; }
+.pp-cre .ct3-about-card p { margin:0; color:#242424; font-size:12px; white-space:pre-line; overflow-wrap:anywhere; }
+.pp-cre .ct3-project-grid,.pp-cre .ct3-details-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.pp-cre .ct3-project-card { min-width:0; min-height:135px; padding:20px; border:2px solid #242424; border-radius:10px; overflow-wrap:anywhere; }
+.pp-cre .ct3-project-card.peach { background:#ffccba; transform:rotate(-.6deg); }
+.pp-cre .ct3-project-card.blue { background:#dce7ff; transform:rotate(.6deg); }
+.pp-cre .ct3-project-number { color:#ff5b35; font-size:9px; font-weight:900; }
+.pp-cre .ct3-project-card h3 { margin:8px 0; color:#242424; font-size:17px; }
+.pp-cre .ct3-project-card p { margin:0; color:#555; font-size:11px; }
+.pp-cre .ct3-detail-card { min-width:0; padding:22px; border:2px solid #242424; border-radius:10px; background:#fff; }
+.pp-cre .ct3-detail-card h3 { margin:0 0 10px; font-size:17px; color:#242424; }
+.pp-cre .ct3-detail-card p { margin:0; color:#666; font-size:11px; white-space:pre-line; overflow-wrap:anywhere; }
+.pp-cre .ct3-skills,.pp-cre .ct3-social-list { display:flex; flex-wrap:wrap; gap:9px; }
+.pp-cre .ct3-skill,.pp-cre .ct3-social-link { display:inline-block; padding:8px 12px; border:2px solid #242424; border-radius:6px; color:#242424; font-size:10px; font-weight:800; overflow-wrap:anywhere; }
+.pp-cre .ct3-skill { background:#d7f36b; }
+.pp-cre .ct3-skill:nth-child(3n+2) { background:#ffccba; }
+.pp-cre .ct3-skill:nth-child(3n) { background:#dce7ff; }
+.pp-cre .ct3-social-link { background:#fff; }
+.pp-cre .ct3-share { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:25px; padding:22px; border:2px solid #242424; border-radius:10px; background:#242424; color:#fff; }
+.pp-cre .ct3-share > div { flex:1 1 170px; }
+.pp-cre .ct3-share h2 { margin:0 0 4px; color:#fff; font-size:20px; }
+.pp-cre .ct3-share p { margin:0; color:#ddd; font-size:10px; }
+.pp-cre .ct3-share-url { flex:1 1 180px; min-width:0; padding:9px 10px; background:#fff; color:#242424; border-radius:4px; font-size:9px; overflow-wrap:anywhere; }
+.pp-cre .ct3-action { display:inline-block; padding:9px 11px; border:1px solid #aaa; border-radius:4px; color:#fff; font-size:9px; white-space:nowrap; }
+.pp-cre .ct3-action.primary { border-color:#d7f36b; background:#d7f36b; color:#242424; }
+.pp-cre .ct3-action.danger { border-color:#ff5b35; background:#ff5b35; }
+.pp-cre .ct3-footer { padding:16px 0 8px; color:#777; font-size:10px; text-align:center; }
+@media (max-width:700px) {
+    .mini-t3-nav small { display:none; }
+    .mini-t3-hero { grid-template-columns:1fr .75fr; }
+    .pp-cre .ct3-page { padding:0 16px 18px; }
+    .pp-cre .ct3-nav { align-items:flex-start; flex-direction:column; gap:8px; }
+    .pp-cre .ct3-hero { grid-template-columns:1fr; padding:30px 0 38px; }
+    .pp-cre .ct3-portrait-area { width:min(100%,380px); margin:0 auto; }
+    .pp-cre .ct3-portrait { height:280px; }
+    .pp-cre .ct3-project-grid,.pp-cre .ct3-details-grid { grid-template-columns:1fr; }
+    .pp-cre .ct3-section-heading { align-items:flex-start; flex-direction:column; }
+    .pp-cre .ct3-section-heading p { text-align:left; }
+    .pp-cre .ct3-share { align-items:stretch; flex-direction:column; }
+}
+
 </style>
  </head>
  <body>
@@ -2111,14 +2225,29 @@ body {
     <!-- Creative -->
     <div class="glass-card tpl-card" id="tpl-cre">
      <div class="tpl-frame" onclick="openPreview('Creative')" title="Click to preview">
-      <div class="pv pv-cre mini-creative-page">
-       <div class="mini-creative-nav"><strong>MYFOLIO <span>/ CREATIVE</span></strong><small>CREATIVE EDITION / 03</small></div>
-       <div class="mini-creative-hero">
-        <div class="mini-creative-copy"><small>A LITTLE ABOUT ME</small><strong>{{ $previewName }}</strong><span>A collection of ideas and things worth sharing.</span><i>PORTFOLIO NO. {{ str_pad((string) $portfolio->id, 3, '0', STR_PAD_LEFT) }}</i></div>
-        <div class="mini-creative-art"><b></b><div class="mini-creative-portrait">@if ($previewPhoto)<img src="{{ $previewPhoto }}" alt="">@else{{ $previewInitial }}@endif</div><em>A work in progress</em></div>
-       </div>
-       <div class="mini-creative-marquee">✳ STAY CURIOUS　✳ MAKE THINGS　✳ KEEP LEARNING</div>
-       <div class="mini-creative-cards"><div>01 / THE INTRODUCTION</div><div>02 / EDUCATION</div><div>03 / PROJECTS</div></div>
+      <div class="pv pv-cre mini-template3">
+       <nav class="mini-t3-nav">
+        <strong>{{ $previewName }}<span> ✳</span></strong>
+        <small>ABOUT　PROJECTS　SKILLS</small>
+       </nav>
+       <section class="mini-t3-hero">
+        <div class="mini-t3-copy">
+         <span class="mini-t3-tag">CREATIVE PORTFOLIO ✦</span>
+         <strong>Hey, I'm<br><em>{{ $previewName }}</em></strong>
+         <p>A short introduction about the person behind the work.</p>
+         <div class="mini-t3-actions"><b>Let's Connect ↗</b><i>Explore My Work</i></div>
+        </div>
+        <div class="mini-t3-art">
+         <div class="mini-t3-photo">@if ($previewPhoto)<img src="{{ $previewPhoto }}" alt="">@else{{ $previewInitial }}@endif</div>
+         <b class="mini-t3-sticker">LET'S<br>CREATE!</b>
+        </div>
+       </section>
+       <section class="mini-t3-about"><strong>ABOUT ME</strong><b>A little about me.</b><span></span><span style="width:72%"></span></section>
+       <div class="mini-t3-section-title">MY PROJECTS <small>SELECTED WORK</small></div>
+       <div class="mini-t3-projects"><div><b>01</b><strong>Project title</strong><span></span></div><div><b>02</b><strong>Another project</strong><span></span></div></div>
+       <div class="mini-t3-details"><div><b>EDUCATION</b><span></span><span style="width:75%"></span></div><div><b>WORK EXPERIENCE</b><span></span><span style="width:66%"></span></div></div>
+       <div class="mini-t3-skills"><b>HTML</b><b>CSS</b><b>PHP</b></div>
+       <div class="mini-t3-share">Share Your Portfolio <span>Copy　Edit　Delete</span></div>
       </div>
      </div>
      <div class="tpl-info">
@@ -2126,7 +2255,7 @@ body {
        Creative
       </h3>
       <p class="desc">
-       An editorial layout with a mint introduction panel, lilac portrait panel, yellow accents, and staggered story cards.
+       A playful cream canvas with a lime tag, coral name accent, peach portrait frame, colorful project cards, skills, and social links.
       </p>
       <div class="tpl-btns">
        <button class="btn-primary" onclick="openPreview('Creative')">
@@ -2139,7 +2268,7 @@ body {
      </div>
     </div>
    </div>
-   <a class="back-link" href="{{ route('portfolio.edit', $portfolio->id) }}">
+   <a class="back-link" href="{{ route('portfolio.edit', $portfolio->id) }}?return_to=choose-template">
     &larr; Back to Edit Portfolio
    </a>
   </div>
@@ -2279,27 +2408,88 @@ function renderTemplate(key, data) {
         </div></div>`;
     }
 
-    const projectCards = projects.map((project, index) => `<article class="creative-project-item"><div class="creative-meta"><span>PROJECT ${String(index + 1).padStart(2, '0')}</span><span>SELECTED WORK</span></div><h2>${esc(project.split(/\s*[:|]\s*/, 1)[0])}</h2><p>${esc(project.includes(':') ? project.slice(project.indexOf(':') + 1).trim() : 'A project included in my portfolio.')}</p></article>`).join('') || '<article class="creative-project-item"><div class="creative-meta"><span>PROJECT 01</span><span>SELECTED WORK</span></div><h2>Things I have made.</h2><p>Your project details will appear here.</p></article>';
-    const creativeSkills = skills.map((skill) => `<span class="creative-skill">${esc(skill)}</span>`).join('') || '<span class="creative-skill">Add your skills</span>';
-    const contactItems = [
-        data.email ? `<div class="creative-contact-item"><strong>EMAIL</strong><span>${esc(data.email)}</span></div>` : '',
-        data.phone ? `<div class="creative-contact-item"><strong>PHONE</strong><span>${esc(data.phone)}</span></div>` : '',
-        location ? `<div class="creative-contact-item"><strong>LOCATION</strong><span>${esc(location)}</span></div>` : '',
-        links.length ? `<div class="creative-contact-item"><strong>ELSEWHERE</strong><span>${links.map(esc).join(' · ')}</span></div>` : ''
+    const creativeProjectCards = projects.map((project, index) => `
+        <article class="ct3-project-card ${index % 2 === 0 ? 'peach' : 'blue'}">
+            <span class="ct3-project-number">PROJECT ${String(index + 1).padStart(2, '0')}</span>
+            <h3>${esc(project)}</h3>
+            <p>A project featured in my portfolio.</p>
+        </article>`).join('') || `
+        <article class="ct3-project-card peach">
+            <span class="ct3-project-number">PROJECT 01</span>
+            <h3>Notable projects you have built.</h3>
+            <p>A project featured in my portfolio.</p>
+        </article>`;
+    const creativeSkillPills = skills.map((skill) => `<span class="ct3-skill">${esc(skill)}</span>`).join('') || '<span class="ct3-skill">Your skills</span>';
+    const socialPills = links.map((link) => `<span class="ct3-social-link">${esc(link)} ↗</span>`).join('') || '<span class="ct3-social-link">Your links ↗</span>';
+    const firstContact = data.email ? `<a class="ct3-button" href="#">Let's Connect ↗</a>` : '';
+    const projectButton = projects.length ? '<a class="ct3-button outline" href="#">Explore My Work</a>' : '';
+    const contactLines = [
+        data.email ? `<div><strong>EMAIL</strong><span>${esc(data.email)}</span></div>` : '',
+        data.phone ? `<div><strong>PHONE</strong><span>${esc(data.phone)}</span></div>` : '',
+        location ? `<div><strong>LOCATION</strong><span>${esc(location)}</span></div>` : ''
     ].filter(Boolean).join('');
-    const nameParts = String(data.name || 'Your Name').trim().split(/\s+/);
-    const firstName = esc(nameParts.shift() || 'Your');
-    const restName = esc(nameParts.join(' '));
+    const creativeName = esc(data.name || 'Your Name');
 
-    return `<div class="pp pp-cre"><div class="creative-page">
-        <header class="creative-header"><a class="creative-brand" href="#">MYFOLIO <span>/ CREATIVE</span></a><div class="creative-header-links"><span>MY STORY</span><span>CONTACT</span><span>NEW PORTFOLIO</span></div><small>PERSONAL PORTFOLIO <strong>CREATIVE EDITION / 03</strong></small></header>
-        <main class="creative-content">
-            <section class="creative-hero"><div class="creative-hero-copy"><span class="creative-eyebrow">A LITTLE ABOUT ME</span><h1>${firstName}${restName ? `<br><span>${restName}</span>` : ''}</h1><p>${esc(data.about)}</p><div class="creative-footnote"><span>PORTFOLIO NO. {{ str_pad((string) $portfolio->id, 3, '0', STR_PAD_LEFT) }}</span><span>MADE TO BE PERSONAL</span></div></div><div class="creative-hero-art"><b class="creative-art-shape"></b><div class="creative-portrait">${portraitMarkup}</div><span class="creative-art-note">A work in progress, in the best way.</span></div></section>
-            <div class="creative-marquee"><span>✳</span> STAY CURIOUS <span>✳</span> MAKE THINGS <span>✳</span> KEEP LEARNING <span>✳</span> STAY CURIOUS</div>
-            <section class="creative-story-grid"><article class="creative-story-card creative-about"><div class="creative-meta"><span>01 / THE INTRODUCTION</span><span>A LITTLE CONTEXT</span></div><h2>The person behind the projects.</h2><p>${esc(data.about || 'Add a short introduction to tell people who you are and what matters to you.')}</p></article><article class="creative-story-card creative-education"><div class="creative-meta"><span>02 / WHERE I LEARNED</span><span>BACKGROUND</span></div><h2>Learning along the way.</h2><p>${esc(data.education)}</p></article><article class="creative-story-card creative-experience"><div class="creative-meta"><span>03 / WHAT I HAVE DONE</span><span>EXPERIENCE</span></div><h2>Growing with every project.</h2><p>${esc(data.experience)}</p></article><article class="creative-story-card creative-projects"><div class="creative-meta"><span>04 / SELECTED WORK</span><span>PROJECTS</span></div><h2>Things I've made.</h2><div class="creative-project-list">${projectCards}</div></article><article class="creative-story-card creative-skills"><div class="creative-meta"><span>05 / MY TOOLKIT</span><span>SKILLS</span></div><h2>Things I use.</h2><div class="creative-skills-list">${creativeSkills}</div></article><article class="creative-story-card creative-contact"><div class="creative-meta"><span>06 / SAY HELLO</span><span>CONTACT</span></div><h2>Let's keep in touch.</h2><div class="creative-contact-list">${contactItems || '<p>Add your contact details and social links to complete this section.</p>'}</div></article></section>
-            <div class="creative-actions"><div><strong>YOUR PORTFOLIO, READY TO SHARE</strong><p>${esc(portfolioUrl)}</p></div><span>Copy link</span><span>Edit portfolio</span><span class="danger">Delete portfolio</span></div>
-            <footer class="creative-footer"><span>MADE TO BE PERSONAL ✳</span><span>© ${year} ${name}</span></footer>
-        </main></div></div>`;
+    return `<div class="pp pp-cre"><div class="ct3-page">
+        <nav class="ct3-nav">
+            <a class="ct3-brand" href="#">${creativeName}<span> ✳</span></a>
+            <div class="ct3-nav-links"><span>ABOUT</span><span>PROJECTS</span><span>SKILLS</span><span>SOCIAL</span></div>
+        </nav>
+        <main class="ct3-container">
+            <header class="ct3-hero" id="home">
+                <div class="ct3-hero-copy">
+                    <span class="ct3-tag">CREATIVE PORTFOLIO ✦</span>
+                    <h1>Hey, I'm<br><span>${creativeName}</span></h1>
+                    <p>${esc(data.about)}</p>
+                    <div class="ct3-contact-row">${firstContact}${projectButton}</div>
+                    ${data.phone ? `<p class="ct3-contact-line">Contact: ${esc(data.phone)}</p>` : ''}
+                    ${location ? `<p class="ct3-contact-line">${esc(location)}</p>` : ''}
+                </div>
+                <div class="ct3-portrait-area">
+                    <div class="ct3-portrait">${portraitMarkup}</div>
+                    <span class="ct3-sticker">LET'S<br>CREATE!</span>
+                </div>
+            </header>
+
+            <section class="ct3-section" id="about">
+                <div class="ct3-section-heading"><h2>A Little About Me</h2><p>THE PERSON BEHIND THE WORK</p></div>
+                <div class="ct3-about-card"><h3>Curious mind. Creative ideas.</h3><p>${esc(data.about || 'A short bio about you, your passion, and what drives you will appear here.')}</p></div>
+            </section>
+
+            <section class="ct3-section" id="projects">
+                <div class="ct3-section-heading"><h2>Things I've Created ✳</h2><p>A SELECTION OF MY PROJECTS</p></div>
+                <div class="ct3-project-grid">${creativeProjectCards}</div>
+            </section>
+
+            <section class="ct3-section" id="background">
+                <div class="ct3-section-heading"><h2>My Background</h2><p>LEARNING AND GROWING</p></div>
+                <div class="ct3-details-grid">
+                    <article class="ct3-detail-card"><h3>Educational Background</h3><p>${esc(data.education || 'Your degree, school, and graduation year will appear here.')}</p></article>
+                    <article class="ct3-detail-card"><h3>Work Experience</h3><p>${esc(data.experience || 'Your previous roles and companies will appear here.')}</p></article>
+                </div>
+            </section>
+
+            <section class="ct3-section" id="skills">
+                <div class="ct3-section-heading"><h2>My Skills</h2><p>TOOLS AND THINGS I KNOW</p></div>
+                <div class="ct3-skills">${creativeSkillPills}</div>
+            </section>
+
+            <section class="ct3-section" id="social">
+                <div class="ct3-section-heading"><h2>Social Links</h2><p>LET'S STAY CONNECTED</p></div>
+                <div class="ct3-social-list">${socialPills}</div>
+            </section>
+
+            <section class="ct3-share">
+                <div><h2>Share Your Portfolio</h2><p>Share this link with friends, classmates, or potential employers.</p></div>
+                <span class="ct3-share-url">${esc(portfolioUrl)}</span>
+                <span class="ct3-action primary">Copy Link</span>
+                <span class="ct3-action">Edit Portfolio</span>
+                <span class="ct3-action danger">Delete Portfolio</span>
+            </section>
+            <footer class="ct3-footer">© ${year} ${creativeName}. All rights reserved.</footer>
+        </main>
+    </div></div>`;
+
 }
 
 function openPreview(name){ document.getElementById('pvTitle').textContent=name+' template'; const body=document.getElementById('pvBody'); body.innerHTML=renderTemplate(name,getData()); body.scrollTop=0; document.getElementById('pvChoose').onclick=()=>{closePreview();selectTemplate(name)}; document.getElementById('previewOverlay').classList.add('open'); } function closePreview(){document.getElementById('previewOverlay').classList.remove('open')} addEventListener('keydown',e=>{if(e.key==='Escape')closePreview()});  // ---- Template selection ----
