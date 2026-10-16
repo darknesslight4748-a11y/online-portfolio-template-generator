@@ -1,639 +1,669 @@
+{{--
+    PortGen Template 1 — Simple Navy Layout
+    Keeps the original banner, left sidebar, round profile photo, and timeline sections.
+    Portfolio data is read from the $portfolio model passed by PortfolioController.
+--}}
+
+@php
+    $name = trim((string) ($portfolio->full_name ?? '')) ?: 'Your Name';
+    $about = trim((string) ($portfolio->about_me ?? ''));
+    $email = trim((string) ($portfolio->email ?? ''));
+    $phone = trim((string) ($portfolio->contact_number ?? ''));
+    $location = trim((string) ($portfolio->address ?? ''));
+
+    $photo = !empty($portfolio->profile_picture)
+        ? asset('storage/' . ltrim($portfolio->profile_picture, '/'))
+        : null;
+
+    // Split textarea content into lines so the saved form data is easy to read.
+    $splitLines = static function ($value): array {
+        $value = trim((string) $value);
+
+        if ($value === '') {
+            return [];
+        }
+
+        return array_values(array_filter(
+            array_map('trim', preg_split('/\R+/', $value) ?: []),
+            static fn ($line) => $line !== ''
+        ));
+    };
+
+    $projects = [];
+    foreach ($splitLines($portfolio->projects ?? '') as $projectLine) {
+        $parts = preg_split('/\s*[:|]\s*/', $projectLine, 2) ?: [];
+        $projects[] = [
+            'title' => trim($parts[0] ?? '') ?: 'My Project',
+            'description' => trim($parts[1] ?? ''),
+        ];
+    }
+
+    $education = $splitLines($portfolio->education ?? '');
+    $work = $splitLines($portfolio->work_experience ?? '');
+
+    $skills = [];
+    $skillsText = trim((string) ($portfolio->skills ?? ''));
+    if ($skillsText !== '') {
+        $skills = array_values(array_filter(array_map(
+            'trim',
+            preg_split('/[,;\r\n]+/', $skillsText) ?: []
+        ), static fn ($skill) => $skill !== ''));
+    }
+
+    // Social links accept one entry per line, either "Label: https://..." or a URL.
+    $socials = [];
+    foreach ($splitLines($portfolio->social_links ?? '') as $socialLine) {
+        if (preg_match('/^(.+?)\s*:\s*(https?:\/\/\S+|www\.\S+)$/i', $socialLine, $matches)) {
+            $label = trim($matches[1]);
+            $url = trim($matches[2]);
+        } else {
+            $label = $socialLine;
+            $url = $socialLine;
+        }
+
+        if (str_starts_with(strtolower($url), 'www.')) {
+            $url = 'https://' . $url;
+        } elseif (!preg_match('~^https?://~i', $url) && preg_match('/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i', $url)) {
+            $url = 'https://' . $url;
+        } elseif (!preg_match('~^https?://~i', $url)) {
+            $url = '#contact';
+        }
+
+        $socials[] = ['label' => $label, 'url' => $url];
+    }
+
+    $shareUrl = route('portfolio.show', $portfolio->id);
+    $editUrl = route('portfolio.edit', $portfolio->id);
+    $initial = mb_strtoupper(mb_substr($name, 0, 1));
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $portfolio->full_name }} | Professional Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#262a5c">
+    <title>{{ $name }} | Portfolio</title>
 
     <style>
+        :root {
+            --navy: #262a5c;
+            --navy-dark: #1d2048;
+            --sidebar: #edf1f3;
+            --text: #2b2f4a;
+            --muted: #5a5f7a;
+            --line: #c5c9d5;
+            --bg: #e6e8ee;
+            --paper: #ffffff;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
+            padding: 0;
         }
 
         html {
             scroll-behavior: smooth;
+            scroll-padding-top: 16px;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
-            color: #26364d;
-            line-height: 1.6;
+            padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+            line-height: 1.5;
         }
 
         a {
-            text-decoration: none;
+            color: inherit;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            background: white;
-            min-height: 100vh;
+        .page {
+            max-width: 960px;
+            margin: 24px auto;
+            overflow: hidden;
+            background: var(--paper);
+            box-shadow: 0 18px 50px rgba(29, 32, 72, 0.10);
         }
 
-        /* Navigation */
-
-        nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            padding: 20px 5%;
-            border-bottom: 1px solid #e8edf4;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #183153;
-            overflow-wrap: anywhere;
-        }
-
-        .brand-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #183153;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .nav-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .nav-links a {
-            font-size: 13px;
-            color: #536176;
-        }
-
-        .nav-links a:hover {
-            color: #2875e8;
-        }
-
-        /* Profile introduction */
-
-        .hero {
-            display: grid;
-            grid-template-columns: 0.85fr 1.4fr 0.8fr;
-            align-items: center;
-            gap: 35px;
-            padding: 55px 5%;
-            background: linear-gradient(120deg, #f8fbff, #ffffff);
-        }
-
-        .photo-wrap {
-            background: #eaf1fb;
-            padding: 16px;
-            border-radius: 25px;
-            width: fit-content;
-            max-width: 100%;
-        }
-
-        .profile-picture {
-            display: block;
-            width: 220px;
-            height: 260px;
-            object-fit: cover;
-            object-position: center;
-            border-radius: 12px;
-        }
-
-        .photo-placeholder {
-            width: 220px;
-            height: 260px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            background: #dce7f5;
-            color: #183153;
-            font-size: 65px;
-            font-weight: bold;
-        }
-
-        .eyebrow {
-            color: #2875e8;
-            font-size: 12px;
-            letter-spacing: 2px;
-            font-weight: bold;
-        }
-
-        .hero h1 {
-            font-size: clamp(30px, 4vw, 44px);
-            line-height: 1.2;
-            margin: 8px 0;
-            color: #183153;
-            overflow-wrap: anywhere;
-        }
-
-        .hero-description {
-            color: #61718a;
-            margin: 12px 0 18px;
-            white-space: pre-line;
-            overflow-wrap: anywhere;
-        }
-
-        .contact-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px 18px;
-            font-size: 13px;
-            color: #455670;
-        }
-
-        .hero-note {
-            color: #2875e8;
-            font-size: 25px;
-            font-weight: bold;
-            line-height: 1.4;
-        }
-
-        .hero-note span {
-            display: block;
-            margin-top: 12px;
-            width: 75px;
-            height: 4px;
-            background: #2875e8;
-        }
-
-        /* Information sections */
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 18px;
-            padding: 5px 5% 20px;
-        }
-
-        .card {
-            padding: 23px;
-            border: 1px solid #e5edf7;
-            border-radius: 12px;
-            background: white;
-            box-shadow: 0 4px 14px rgba(30, 60, 100, 0.04);
-            overflow-wrap: anywhere;
-        }
-
-        .card h2 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            color: #183153;
-            font-size: 17px;
-        }
-
-        .card-icon {
-            color: #2875e8;
-            font-size: 21px;
-        }
-
-        .card p {
-            color: #61718a;
-            font-size: 14px;
-            white-space: pre-line;
-        }
-
-        .skills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .skill {
-            padding: 6px 12px;
-            border-radius: 20px;
-            background: #edf4ff;
-            color: #245da8;
-            font-size: 12px;
-        }
-
-        .project-item {
-            padding: 10px 0;
-            border-bottom: 1px solid #e7edf5;
-        }
-
-        .project-item:first-child {
-            padding-top: 0;
-        }
-
-        .project-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .project-item h3 {
-            color: #334b6d;
-            font-size: 14px;
-            margin-bottom: 3px;
-        }
-
-        .project-item p {
-            font-size: 12px;
-        }
-
-        .social-list {
+        .banner {
+            min-height: 150px;
+            padding: 28px 40px 28px 300px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            justify-content: center;
+            color: #ffffff;
+            background: var(--navy);
         }
 
-        .social-list a {
-            color: #2875e8;
-            font-size: 13px;
+        .banner h1 {
+            overflow-wrap: anywhere;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            letter-spacing: 3px;
+            line-height: 1.15;
+            text-transform: uppercase;
+        }
+
+        .banner p {
+            margin-top: 8px;
+            color: #e2e5f7;
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .body-layout {
+            display: grid;
+            grid-template-columns: 260px minmax(0, 1fr);
+        }
+
+        .sidebar {
+            min-width: 0;
+            padding: 0 24px 32px;
+            background: var(--sidebar);
+        }
+
+        .photo {
+            width: 190px;
+            height: 190px;
+            margin: -95px 0 28px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 5px solid #ffffff;
+            border-radius: 50%;
+            background: #dbe6f5;
+            color: var(--navy);
+            font-size: 4.5rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+
+        .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .side {
+            margin-bottom: 26px;
+            font-size: 0.85rem;
             overflow-wrap: anywhere;
         }
 
-        .social-list a:hover {
+        .side h3 {
+            margin-bottom: 12px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--line);
+            color: var(--navy);
+            font-size: 1.05rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .side p {
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        .side ul {
+            margin-left: 19px;
+        }
+
+        .side li {
+            margin-bottom: 7px;
+        }
+
+        .side a {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            text-decoration: none;
+            overflow-wrap: anywhere;
+        }
+
+        .side a:hover {
+            color: var(--navy);
             text-decoration: underline;
         }
 
-        /* Sharing controls */
-
-        .share-section {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr auto;
-            align-items: center;
-            gap: 20px;
-            margin: 0 5% 25px;
-            padding: 22px;
-            border-radius: 10px;
-            background: #203d60;
-            color: white;
-        }
-
-        .share-section h2 {
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-
-        .share-section p {
-            font-size: 12px;
-            color: #d5e0ee;
-        }
-
-        .share-row {
+        .contact-item {
             display: flex;
-            gap: 8px;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+            overflow-wrap: anywhere;
         }
 
-        .share-row input {
-            width: 100%;
+        .contact-item svg {
+            flex: 0 0 14px;
+            width: 14px;
+            height: 14px;
+            margin-top: 4px;
+            fill: var(--navy);
+        }
+
+        .main-content {
             min-width: 0;
-            padding: 11px;
-            border: none;
-            border-radius: 5px;
-            font-size: 12px;
+            padding: 36px 40px 32px 20px;
+        }
+
+        .section {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 44px;
+        }
+
+        .section::before {
+            position: absolute;
+            top: 30px;
+            bottom: -30px;
+            left: 14px;
+            width: 2px;
+            background: var(--line);
+            content: "";
+        }
+
+        .section:last-child::before {
+            display: none;
+        }
+
+        .dot {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--navy);
+            color: #ffffff;
+            font-size: 0.8rem;
+        }
+
+        .section h2 {
+            margin-bottom: 12px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--line);
+            color: var(--navy);
+            font-size: 1.12rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .section p,
+        .entry-description {
+            color: var(--muted);
+            font-size: 0.88rem;
+            overflow-wrap: anywhere;
+        }
+
+        .entry {
+            margin-bottom: 18px;
+        }
+
+        .entry:last-child {
+            margin-bottom: 0;
+        }
+
+        .entry-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .entry-description {
+            margin-top: 4px;
+            white-space: pre-line;
+        }
+
+        .project-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .project-item {
+            padding: 10px 12px;
+            border-left: 3px solid var(--navy);
+            background: rgba(255, 255, 255, 0.68);
+        }
+
+        .project-item strong {
+            display: block;
+            font-size: 0.84rem;
+        }
+
+        .project-item p {
+            margin-top: 3px;
+            font-size: 0.78rem;
+        }
+
+        .share {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 32px;
+            background: var(--navy-dark);
+            color: #ffffff;
+        }
+
+        .share-copy {
+            flex: 1 1 180px;
+        }
+
+        .share small {
+            display: block;
+            margin-top: 3px;
+            color: #e0e3f4;
+            font-size: 0.75rem;
+        }
+
+        .share input {
+            flex: 1 1 220px;
+            min-width: 0;
+            padding: 10px 12px;
+            border: 1px solid #d8dcef;
+            border-radius: 4px;
+            background: #ffffff;
+            color: #25294b;
+            font-size: 0.8rem;
         }
 
         .button {
-            display: inline-block;
-            padding: 10px 13px;
-            border: none;
-            border-radius: 5px;
-            background: #2875e8;
-            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 9px 16px;
+            border: 1px solid #8fa4d8;
+            border-radius: 4px;
+            background: transparent;
+            color: #ffffff;
+            font: inherit;
+            font-size: 0.8rem;
+            text-decoration: none;
             cursor: pointer;
-            font-size: 12px;
-            text-align: center;
             white-space: nowrap;
         }
 
+        .button.primary {
+            border-color: #2f6fe0;
+            background: #2f6fe0;
+        }
+
         .button:hover {
-            opacity: 0.88;
+            filter: brightness(1.08);
         }
 
-        .edit-button {
-            background: transparent;
-            border: 1px solid #7fb0ff;
+        .button.danger {
+            border-color: #e36a72;
+            background: #b92f3a;
+            color: #ffffff;
         }
 
-        .delete-button {
-            background: #dc3545;
+        .button.danger:hover {
+            background: #9f2530;
         }
 
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+        .delete-form {
+            display: inline-flex;
+            margin: 0;
         }
 
-        #copyMessage {
-            display: none;
-            margin-top: 6px;
-            color: #a7f3c0;
-        }
 
-        footer {
-            padding: 20px;
-            background: #172d48;
-            color: #d5e0ee;
+        .footer {
+            padding: 12px;
+            background: #f4f5f9;
+            color: var(--muted);
+            font-size: 0.75rem;
             text-align: center;
-            font-size: 12px;
         }
 
-        @media (max-width: 900px) {
-            .hero {
-                grid-template-columns: 0.8fr 1.2fr;
-            }
-
-            .hero-note {
-                display: none;
-            }
-
-            .content-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .share-section {
-                grid-template-columns: 1fr;
-            }
+        .empty-note {
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-style: italic;
         }
 
-        @media (max-width: 600px) {
-            nav {
-                align-items: flex-start;
-                flex-direction: column;
-                padding: 18px 5%;
+        @media (max-width: 720px) {
+            .page {
+                margin: 0 auto;
             }
 
-            .nav-links {
-                gap: 12px;
-            }
-
-            .hero {
-                grid-template-columns: 1fr;
+            .banner {
+                min-height: 0;
+                padding: 28px 24px;
                 text-align: center;
-                padding: 35px 6%;
-                gap: 22px;
             }
 
-            .photo-wrap {
-                margin: auto;
+            .banner h1 {
+                font-size: 1.8rem;
+                letter-spacing: 1.5px;
             }
 
-            .profile-picture,
-            .photo-placeholder {
-                width: 190px;
-                height: 220px;
+            .banner p {
+                font-size: 0.85rem;
             }
 
-            .contact-info {
-                justify-content: center;
-            }
-
-            .content-grid {
+            .body-layout {
                 grid-template-columns: 1fr;
-                padding: 5px 5% 20px;
             }
 
-            .share-section {
-                margin: 0 5% 20px;
+            .sidebar {
+                padding: 0 24px 10px;
             }
 
-            .share-row {
-                flex-direction: column;
+            .photo {
+                margin: -10px auto 24px;
             }
 
-            .actions {
-                flex-direction: column;
+            .main-content {
+                padding: 28px 22px 30px;
             }
 
-            .actions .button {
+            .section {
+                padding-left: 40px;
+            }
+
+            .share {
+                padding: 20px;
+            }
+
+            .share input,
+            .share .button {
+                flex: 1 1 100%;
                 width: 100%;
             }
         }
     </style>
 </head>
-
 <body>
-<div class="container">
+    <div class="page">
+        <header class="banner">
+            <h1>{{ $name }}</h1>
+            <p>Personal Portfolio</p>
+        </header>
 
-    <nav>
-        <a href="#home" class="brand">
-            <span class="brand-icon">
-                {{ strtoupper(substr($portfolio->full_name, 0, 1)) }}
-            </span>
-            {{ $portfolio->full_name }}
-        </a>
-
-        <div class="nav-links">
-            <a href="#home">Home</a>
-            @if ($portfolio->about_me)
-                <a href="#about">About</a>
-            @endif
-            @if ($portfolio->education)
-                <a href="#education">Education</a>
-            @endif
-            @if ($portfolio->work_experience)
-                <a href="#experience">Experience</a>
-            @endif
-            @if ($portfolio->skills)
-                <a href="#skills">Skills</a>
-            @endif
-            @if ($portfolio->projects)
-                <a href="#projects">Projects</a>
-            @endif
-        </div>
-    </nav>
-
-    <header class="hero" id="home">
-        <div class="photo-wrap">
-            @if ($portfolio->profile_picture)
-                <img
-                    class="profile-picture"
-                    src="{{ asset('storage/' . $portfolio->profile_picture) }}"
-                    alt="Profile picture"
-                >
-            @else
-                <div class="photo-placeholder">
-                    {{ strtoupper(substr($portfolio->full_name, 0, 1)) }}
+        <div class="body-layout">
+            <aside class="sidebar" id="contact">
+                <div class="photo">
+                    @if ($photo)
+                        <img src="{{ $photo }}" alt="{{ $name }} profile photo">
+                    @else
+                        {{ $initial }}
+                    @endif
                 </div>
-            @endif
-        </div>
 
-        <div>
-            <span class="eyebrow">HELLO, I'M</span>
-            <h1>{{ $portfolio->full_name }}</h1>
+                <div class="side">
+                    <h3>Contact</h3>
 
-            <p class="hero-description">
-                {{ $portfolio->about_me ?: 'Welcome to my professional portfolio.' }}
-            </p>
-
-            <div class="contact-info">
-                @if ($portfolio->email)
-                    <span>{{ $portfolio->email }}</span>
-                @endif
-
-                @if ($portfolio->contact_number)
-                    <span>{{ $portfolio->contact_number }}</span>
-                @endif
-
-                @if ($portfolio->address && strtoupper(trim($portfolio->address)) !== 'NONE')
-                    <span>{{ $portfolio->address }}</span>
-                @endif
-            </div>
-        </div>
-
-        <div class="hero-note">
-            Turning ideas<br>into real projects.
-            <span></span>
-        </div>
-    </header>
-
-    <main class="content-grid">
-
-        @if ($portfolio->about_me)
-            <section class="card" id="about">
-                <h2><span class="card-icon">♙</span> About Me</h2>
-                <p>{{ $portfolio->about_me }}</p>
-            </section>
-        @endif
-
-        @if ($portfolio->education)
-            <section class="card" id="education">
-                <h2><span class="card-icon">◇</span> Educational Background</h2>
-                <p>{{ $portfolio->education }}</p>
-            </section>
-        @endif
-
-        @if ($portfolio->work_experience)
-            <section class="card" id="experience">
-                <h2><span class="card-icon">▣</span> Work Experience</h2>
-                <p>{{ $portfolio->work_experience }}</p>
-            </section>
-        @endif
-
-        @if ($portfolio->skills)
-            <section class="card" id="skills">
-                <h2><span class="card-icon">⚙</span> Skills</h2>
-
-                <div class="skills">
-                    @foreach (explode(',', $portfolio->skills) as $skill)
-                        @if (trim($skill) !== '')
-                            <span class="skill">{{ trim($skill) }}</span>
-                        @endif
-                    @endforeach
-                </div>
-            </section>
-        @endif
-
-        @if ($portfolio->projects)
-            <section class="card" id="projects">
-                <h2><span class="card-icon">&lt;/&gt;</span> Projects</h2>
-
-                @foreach (preg_split('/[\r\n]+/', $portfolio->projects) as $project)
-                    @if (trim($project) !== '')
-                        <div class="project-item">
-                            <h3>{{ trim($project) }}</h3>
-                            <p>Project included in my portfolio.</p>
+                    @if ($phone !== '')
+                        <div class="contact-item">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .6 3.6 1 1 0 0 1-.25 1z"/></svg>
+                            <span>{{ $phone }}</span>
                         </div>
                     @endif
-                @endforeach
-            </section>
-        @endif
 
-        @if ($portfolio->social_links)
-            <section class="card" id="contact">
-                <h2><span class="card-icon">↗</span> Social Media and Websites</h2>
+                    @if ($email !== '')
+                        <div class="contact-item">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h20v14H2zm2 2v.5l8 5 8-5V7zm16 3-8 5-8-5v7h16z"/></svg>
+                            <span>{{ $email }}</span>
+                        </div>
+                    @endif
 
-                <div class="social-list">
-                    @foreach (preg_split('/[\r\n,]+/', $portfolio->social_links) as $link)
-                        @if (trim($link) !== '')
-                            @php
-                                $url = trim($link);
-                                $href = preg_match('/^https?:\/\//i', $url)
-                                    ? $url
-                                    : 'https://' . $url;
-                            @endphp
+                    @if ($location !== '')
+                        <div class="contact-item">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+                            <span>{{ $location }}</span>
+                        </div>
+                    @endif
 
-                            <a href="{{ $href }}" target="_blank"
-                               rel="noopener noreferrer">
-                                {{ $url }}
-                            </a>
-                        @endif
-                    @endforeach
+                    @if ($phone === '' && $email === '' && $location === '')
+                        <p class="empty-note">Add your contact information to show it here.</p>
+                    @endif
                 </div>
-            </section>
-        @endif
 
-    </main>
+                <div class="side">
+                    <h3>Skills</h3>
+                    @if (count($skills))
+                        <ul>
+                            @foreach ($skills as $skill)
+                                <li>{{ $skill }}</li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="empty-note">Your skills will appear here.</p>
+                    @endif
+                </div>
 
-    <section class="share-section">
-        <div>
-            <h2>Share Your Portfolio</h2>
-            <p>Copy your portfolio link to share it with others.</p>
-            <p id="copyMessage">Link copied successfully!</p>
+                <div class="side">
+                    <h3>Projects</h3>
+                    @if (count($projects))
+                        <div class="project-list">
+                            @foreach ($projects as $project)
+                                <div class="project-item">
+                                    <strong>{{ $project['title'] }}</strong>
+                                    @if ($project['description'] !== '')
+                                        <p>{{ $project['description'] }}</p>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="empty-note">Your projects will appear here.</p>
+                    @endif
+                </div>
+
+                <div class="side">
+                    <h3>Social Links</h3>
+                    @if (count($socials))
+                        @foreach ($socials as $social)
+                            <a href="{{ $social['url'] }}" target="_blank" rel="noopener noreferrer">{{ $social['label'] }}</a>
+                        @endforeach
+                    @else
+                        <p class="empty-note">Add social links to connect with visitors.</p>
+                    @endif
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <section class="section" id="about">
+                    <span class="dot" aria-hidden="true">1</span>
+                    <h2>About Me</h2>
+                    @if ($about !== '')
+                        <p>{{ $about }}</p>
+                    @else
+                        <p class="empty-note">Add a short introduction about yourself.</p>
+                    @endif
+                </section>
+
+                <section class="section" id="experience">
+                    <span class="dot" aria-hidden="true">2</span>
+                    <h2>Work Experience</h2>
+                    @forelse ($work as $workItem)
+                        <div class="entry">
+                            <div class="entry-title">{{ $workItem }}</div>
+                        </div>
+                    @empty
+                        <p class="empty-note">Your work experience will appear here.</p>
+                    @endforelse
+                </section>
+
+                <section class="section" id="education">
+                    <span class="dot" aria-hidden="true">3</span>
+                    <h2>Educational Background</h2>
+                    @forelse ($education as $educationItem)
+                        <div class="entry">
+                            <div class="entry-title">{{ $educationItem }}</div>
+                        </div>
+                    @empty
+                        <p class="empty-note">Your educational background will appear here.</p>
+                    @endforelse
+                </section>
+            </main>
         </div>
 
-        <div class="share-row">
-            <input
-                id="portfolioLink"
-                type="text"
-                value="{{ url('/portfolio/' . $portfolio->id) }}"
-                readonly
+        <div class="share">
+            <div class="share-copy">
+                <strong>Share Your Portfolio</strong>
+                <small>Copy your portfolio link to share it with others.</small>
+            </div>
+            <input id="shareLink" type="text" value="{{ $shareUrl }}" aria-label="Portfolio share link" readonly>
+            <button class="button primary" type="button" onclick="copyPortfolioLink(this)">Copy Link</button>
+            <a class="button" href="{{ $editUrl }}">Edit Portfolio</a>
+
+            <form
+                class="delete-form"
+                action="{{ route('portfolio.destroy', $portfolio->id) }}"
+                method="POST"
+                onsubmit="return confirm('Are you sure you want to delete this portfolio? This action cannot be undone.');"
             >
-
-            <button class="button" type="button" onclick="copyLink()">
-                Copy Link
-            </button>
-        </div>
-
-        <div class="actions">
-            <a class="button edit-button"
-               href="{{ route('portfolio.edit', $portfolio->id) }}">
-                Edit Portfolio
-            </a>
-
-            <form action="{{ route('portfolio.destroy', $portfolio->id) }}"
-                  method="POST"
-                  onsubmit="return confirm('Are you sure you want to delete this portfolio?');">
                 @csrf
                 @method('DELETE')
-
-                <button class="button delete-button" type="submit">
-                    Delete Portfolio
-                </button>
+                <button class="button danger" type="submit">Delete Portfolio</button>
             </form>
         </div>
-    </section>
 
-    <footer>
-        &copy; {{ date('Y') }} {{ $portfolio->full_name }}. All rights reserved.
-    </footer>
+        <footer class="footer">
+            &copy; {{ date('Y') }} {{ $name }}. All rights reserved.
+        </footer>
+    </div>
 
-</div>
+    <script>
+        async function copyPortfolioLink(button) {
+            const input = document.getElementById('shareLink');
+            const originalLabel = button.textContent;
 
-<script>
-    function copyLink() {
-        const input = document.getElementById('portfolioLink');
-        input.select();
-        input.setSelectionRange(0, 99999);
-
-        navigator.clipboard.writeText(input.value)
-            .then(() => {
-                document.getElementById('copyMessage').style.display = 'block';
-            })
-            .catch(() => {
-                if (document.execCommand('copy')) {
-                    document.getElementById('copyMessage').style.display = 'block';
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(input.value);
                 } else {
-                    alert('Please copy the link manually.');
+                    input.focus();
+                    input.select();
+                    const copied = document.execCommand('copy');
+                    if (!copied) {
+                        throw new Error('Copy command was not successful.');
+                    }
                 }
-            });
-    }
-</script>
 
+                button.textContent = 'Copied!';
+            } catch (error) {
+                input.focus();
+                input.select();
+                button.textContent = 'Select and copy';
+            }
+
+            window.setTimeout(() => {
+                button.textContent = originalLabel;
+            }, 1800);
+        }
+    </script>
 </body>
 </html>

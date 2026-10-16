@@ -87,6 +87,7 @@
             height: 100%;
             z-index: 1;
             pointer-events: none;
+            opacity: 1;
         }
 
         header,
@@ -103,7 +104,7 @@
             padding: 24px 20px 0;
         }
 
-        nav {
+        header > nav {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -114,6 +115,21 @@
             background: var(--nav-bg);
             box-shadow: 0 0 15px var(--accent-glow);
             backdrop-filter: blur(12px);
+        }
+
+        /* Keep the whole navbar in sync with the selected theme. */
+        :root[data-theme="dark"] header > nav {
+            color: #ffffff;
+            background: rgba(12, 14, 18, 0.92);
+            border-color: #38bdf8;
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.22);
+        }
+
+        :root[data-theme="light"] header > nav {
+            color: #0f172a;
+            background: rgba(255, 255, 255, 0.94);
+            border-color: #0284c7;
+            box-shadow: 0 0 18px rgba(2, 132, 199, 0.16);
         }
 
         .logo {
@@ -168,6 +184,11 @@
             stroke-linecap: round;
             stroke-linejoin: round;
         }
+
+        :root[data-theme="dark"] .theme-toggle .sun-icon { display: block; }
+        :root[data-theme="dark"] .theme-toggle .moon-icon { display: none; }
+        :root[data-theme="light"] .theme-toggle .sun-icon { display: none; }
+        :root[data-theme="light"] .theme-toggle .moon-icon { display: block; }
 
         .theme-toggle:hover {
             color: var(--accent-blue);
@@ -460,7 +481,7 @@
 
         @media (max-width: 650px) {
             header { padding: 14px 12px 0; }
-            nav { flex-wrap: wrap; padding: 12px 15px; }
+            header > nav { flex-wrap: wrap; padding: 12px 15px; }
             .nav-links { order: 3; width: 100%; justify-content: space-between; gap: 10px; }
             .nav-links a { font-size: 12px; }
             .logo { font-size: 23px; }
@@ -478,23 +499,7 @@
     </div>
     <canvas id="waveCanvas" aria-hidden="true"></canvas>
 
-    <header>
-        <nav aria-label="Main navigation">
-            <a class="logo" href="{{ route('home') }}">PortGen</a>
-
-            <ul class="nav-links">
-                <li><a href="{{ route('home') }}">Home</a></li>
-                <li><a href="{{ route('portfolio.create') }}">Create Portfolio</a></li>
-            </ul>
-
-            <button class="theme-toggle" id="themeToggleBtn" type="button" title="Toggle light and dark mode" aria-label="Toggle light and dark mode">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="12" r="4"></circle>
-                    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
-                </svg>
-            </button>
-        </nav>
-    </header>
+    @include('partials.portgen-navbar')
 
     <main>
         <section class="hero">
@@ -573,12 +578,22 @@
     <footer>© {{ date('Y') }} PortGen. Create a portfolio that represents you.</footer>
 
     <script>
-        // Remember the visitor's selected theme.
+        // Keep the page and navbar on the same saved light/dark theme.
         const html = document.documentElement;
         const themeButton = document.getElementById('themeToggleBtn');
 
         function setTheme(theme) {
             html.setAttribute('data-theme', theme);
+            document.body.setAttribute('data-theme', theme);
+            html.classList.toggle('dark', theme === 'dark');
+            html.classList.toggle('light', theme === 'light');
+
+            if (themeButton) {
+                const nextTheme = theme === 'dark' ? 'light' : 'dark';
+                themeButton.setAttribute('aria-label', `Switch to ${nextTheme} mode`);
+                themeButton.setAttribute('title', `Switch to ${nextTheme} mode`);
+            }
+
             try {
                 localStorage.setItem('portgen_theme', theme);
             } catch (error) {
@@ -594,54 +609,58 @@
         }
         setTheme(savedTheme);
 
-        themeButton.addEventListener('click', function () {
-            const currentTheme = html.getAttribute('data-theme');
-            setTheme(currentTheme === 'dark' ? 'light' : 'dark');
-        });
+        // The shared navbar partial handles clicks, so the theme is not toggled twice.
 
-        // Draw the animated wave background.
+        // More visible animated wave background, matching the other PortGen pages.
         const canvas = document.getElementById('waveCanvas');
-        const context = canvas.getContext('2d');
-        let animationStep = 0;
+        const context = canvas ? canvas.getContext('2d') : null;
+
+        let waveWidth = 0;
+        let waveHeight = 0;
+        let waveTime = 0;
         let mouseX = window.innerWidth / 2;
         let mouseY = window.innerHeight / 2;
         let targetX = mouseX;
         let targetY = mouseY;
 
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            if (!canvas || !context) return;
+
+            const pixelRatio = window.devicePixelRatio || 1;
+            waveWidth = window.innerWidth;
+            waveHeight = window.innerHeight;
+            canvas.width = Math.floor(waveWidth * pixelRatio);
+            canvas.height = Math.floor(waveHeight * pixelRatio);
+            canvas.style.width = `${waveWidth}px`;
+            canvas.style.height = `${waveHeight}px`;
+            context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
         }
 
-        window.addEventListener('resize', resizeCanvas);
-        window.addEventListener('mousemove', function (event) {
-            targetX = event.clientX;
-            targetY = event.clientY;
-        });
-        resizeCanvas();
-
         function drawWaves() {
+            if (!canvas || !context) return;
+
             mouseX += (targetX - mouseX) * 0.025;
             mouseY += (targetY - mouseY) * 0.025;
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.clearRect(0, 0, waveWidth, waveHeight);
 
             const isLight = html.getAttribute('data-theme') === 'light';
-            const color = isLight ? '2, 132, 199' : '56, 189, 248';
-            const lineCount = 20;
+            const waveColor = isLight ? '2, 132, 199' : '56, 189, 248';
+            const lineCount = 30;
 
             for (let line = 0; line < lineCount; line++) {
                 context.beginPath();
-                context.lineWidth = line === 6 ? 1.4 : 0.7;
-                context.strokeStyle = `rgba(${color}, ${0.08 + (line / lineCount) * 0.32})`;
+                context.lineWidth = line === 15 ? 2.2 : 1.25;
+                context.strokeStyle = `rgba(${waveColor}, ${0.32 + (line / lineCount) * 0.48})`;
 
-                const baseY = canvas.height * 0.45 + (line - lineCount / 2) * 12;
+                const baseY = waveHeight * 0.48 + (line - lineCount / 2) * 10;
 
-                for (let x = 0; x <= canvas.width; x += 4) {
-                    const mouseEffect = Math.sin((x - mouseX) * 0.002) * ((mouseY - canvas.height / 2) * 0.1);
+                for (let x = 0; x <= waveWidth; x += 3) {
+                    const mouseInfluence = Math.sin((x - mouseX) * 0.002)
+                        * ((mouseY - waveHeight / 2) * 0.06);
                     const y = baseY
-                        + Math.sin(x * 0.0025 + animationStep + line * 0.08) * 95
-                        + Math.sin(x * 0.001 - animationStep * 0.4) * 55
-                        + mouseEffect;
+                        + Math.sin(x * 0.0025 + waveTime + line * 0.12) * 105
+                        + Math.sin(x * 0.0015 - waveTime * 0.7) * 55
+                        + mouseInfluence;
 
                     if (x === 0) {
                         context.moveTo(x, y);
@@ -653,10 +672,17 @@
                 context.stroke();
             }
 
-            animationStep += 0.008;
-            requestAnimationFrame(drawWaves);
+            waveTime += 0.012;
+            window.requestAnimationFrame(drawWaves);
         }
 
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', event => {
+            targetX = event.clientX;
+            targetY = event.clientY;
+        });
+
+        resizeCanvas();
         drawWaves();
     </script>
 </body>

@@ -1,3 +1,24 @@
+@php
+    $previewName = trim((string) ($portfolio->full_name ?? '')) ?: 'Your Name';
+    $previewInitial = mb_strtoupper(mb_substr($previewName, 0, 1));
+    $previewPhoto = !empty($portfolio->profile_picture)
+        ? asset('storage/' . ltrim($portfolio->profile_picture, '/'))
+        : null;
+    $previewData = [
+        'name' => $previewName,
+        'email' => (string) ($portfolio->email ?? ''),
+        'phone' => (string) ($portfolio->contact_number ?? ''),
+        'address' => (string) ($portfolio->address ?? ''),
+        'about' => (string) ($portfolio->about_me ?? ''),
+        'education' => (string) ($portfolio->education ?? ''),
+        'skills' => (string) ($portfolio->skills ?? ''),
+        'experience' => (string) ($portfolio->work_experience ?? ''),
+        'projects' => (string) ($portfolio->projects ?? ''),
+        'links' => (string) ($portfolio->social_links ?? ''),
+        'photo' => $previewPhoto,
+    ];
+@endphp
+
 <!DOCTYPE html>
 <html data-theme="dark" lang="en">
  <head>
@@ -8,7 +29,8 @@
   </title>
   <link href="https://fonts.googleapis.com/" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700\&amp;family=Mako\&amp;family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700\&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&amp;family=Mako&amp;family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
    
 :root[data-theme="dark"] {
@@ -94,38 +116,18 @@ body {
 }
 
 #waveCanvas {
-    display: block;
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 2;
-    pointer-events: none;
+    display:block;
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100vh;
+    z-index:2;
+    pointer-events:none
 }
 
-/* Navbar */ header {
-    position:relative;
-    z-index:10;
-    width:100%;
-    max-width:1280px;
-    padding:24px 20px 0;
-    display:flex;
-    justify-content:center
-}
-
-nav {
-    width:100%;
-    background:var(--nav-bg);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    border:2px solid var(--nav-border);
-    border-radius:8px;
-    padding:12px 32px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    box-shadow:0 0 15px var(--accent-glow)
-}
+/* The main PortGen navbar is styled by the shared .pg-navbar partial.
+   Do not style generic header/nav elements here: the live portfolio previews
+   contain their own headers and navigation bars. */
 
 .logo {
     font-family:'Sansation',sans-serif;
@@ -715,10 +717,11 @@ nav {
     font-weight:700
 }
 
-/* Full preview window */ .pv-overlay {
+/* Full preview window: place it above the shared sticky navbar while open. */
+.pv-overlay {
     position:fixed;
     inset:0;
-    z-index:60;
+    z-index:10001;
     background:rgba(0,0,0,.75);
     backdrop-filter:blur(8px);
     display:flex;
@@ -1724,9 +1727,7 @@ nav {
 }
 
 @media(max-width:768px) {
-    nav {
-        padding:12px 16px
-    }
+    /* Responsive rules for the shared navbar live in its partial. */
 
     .nav-links {
         gap:14px
@@ -1739,39 +1740,282 @@ nav {
 }
 
   
+/* --------------------------------------------------------------------------
+   Accurate design previews for the latest saved Template 1 and Template 2.
+   These classes intentionally mirror the real portfolio Blade templates.
+   -------------------------------------------------------------------------- */
+.pv-pro {
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    padding:0;
+    background:#fff;
+    color:#2b2f4a;
+    border:1px solid #c5c9d5;
+    border-radius:8px;
+}
+.pv-pro .mini-pro-banner {
+    min-height:46px;
+    padding:8px 12px 8px 33%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    background:#262a5c;
+    color:#fff;
+}
+.pv-pro .mini-pro-banner strong {font-size:11px;letter-spacing:1px;text-transform:uppercase;line-height:1.2;}
+.pv-pro .mini-pro-banner small {font-size:6px;letter-spacing:1px;color:#e2e5f7;margin-top:3px;}
+.pv-pro .mini-pro-layout {display:grid;grid-template-columns:31% minmax(0,1fr);flex:1;min-height:155px;}
+.pv-pro .mini-pro-sidebar {padding:0 8px 10px;background:#edf1f3;min-width:0;}
+.pv-pro .mini-pro-photo {width:50px;height:50px;margin:-18px auto 9px;display:grid;place-items:center;border:3px solid #fff;border-radius:50%;background:#dbe6f5;color:#262a5c;font-size:19px;font-weight:800;position:relative;z-index:1;}
+.pv-pro .mini-pro-sidegroup {margin-bottom:9px;overflow-wrap:anywhere;}
+.pv-pro .mini-pro-sidegroup b {display:block;padding-bottom:3px;margin-bottom:3px;border-bottom:1px solid #c5c9d5;color:#262a5c;font-size:7px;text-transform:uppercase;letter-spacing:.6px;}
+.pv-pro .mini-pro-sidegroup span {display:block;margin:2px 0;color:#5a5f7a;font-size:6px;line-height:1.4;}
+.pv-pro .mini-pro-main {padding:10px 12px 8px;min-width:0;}
+.pv-pro .mini-pro-section {position:relative;padding:0 0 8px 18px;margin:0 0 10px;border-bottom:1px solid #edf1f3;}
+.pv-pro .mini-pro-section:last-child {border-bottom:0;}
+.pv-pro .mini-pro-section:before {content:"";position:absolute;left:5px;top:12px;bottom:-1px;width:1px;background:#c5c9d5;}
+.pv-pro .mini-pro-section:after {content:"";position:absolute;left:0;top:0;width:11px;height:11px;border-radius:50%;background:#262a5c;}
+.pv-pro .mini-pro-section b {display:block;margin-bottom:3px;color:#262a5c;font-size:7px;letter-spacing:.6px;text-transform:uppercase;}
+.pv-pro .mini-pro-section span {display:block;height:3px;margin-top:4px;border-radius:2px;background:#e2e5ef;}
+.pv-pro .mini-pro-share {padding:7px 10px;background:#1d2048;color:#fff;font-size:7px;font-weight:700;}
+.pv-pro .mini-pro-share em {float:right;font-style:normal;font-weight:400;opacity:.85;}
 
-/* Compact PortGen logo and theme toggle header */
-.portgen-header {
-    position: relative;
-    z-index: 10;
-    width: 100%;
-    max-width: 1280px;
-    padding: 9px 12px 0;
-    display: flex;
-    justify-content: center;
+.pv-mod {
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    padding:0;
+    background:#f5f7fb;
+    color:#151a2d;
+    border:1px solid #e2e6f0;
+    border-radius:8px;
+}
+.pv-mod .mini-mod-nav {display:flex;align-items:center;justify-content:space-between;gap:5px;margin:7px 8px 0;padding:5px 7px;border:1px solid #e2e6f0;border-radius:9px;background:rgba(255,255,255,.92);font-size:6px;font-weight:700;}
+.pv-mod .mini-mod-brand {display:flex;align-items:center;gap:4px;min-width:0;}
+.pv-mod .mini-mod-mark {display:grid;place-items:center;width:15px;height:15px;border-radius:5px;background:#555cf4;color:#fff;font-size:6px;}
+.pv-mod .mini-mod-links {white-space:nowrap;color:#687087;font-size:5px;}
+.pv-mod .mini-mod-hero {display:grid;grid-template-columns:minmax(0,1fr) 48px;align-items:center;gap:9px;margin:7px 8px 8px;padding:11px 9px;background:radial-gradient(circle at 90% 15%,#e7e9ff,transparent 50%),#fff;border-radius:10px;}
+.pv-mod .mini-mod-kicker {display:block;color:#555cf4;font-size:5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;}
+.pv-mod .mini-mod-title {display:block;margin:3px 0;color:#151a2d;font-size:11px;font-weight:800;line-height:1.1;letter-spacing:-.4px;}
+.pv-mod .mini-mod-accent {color:#555cf4;}
+.pv-mod .mini-mod-copy {display:block;color:#687087;font-size:5px;line-height:1.45;}
+.pv-mod .mini-mod-photo {width:44px;height:49px;border:3px solid #fff;border-radius:12px;background:#e7e9ff;box-shadow:0 4px 12px rgba(26,34,71,.12);display:grid;place-items:center;color:#555cf4;font-weight:800;font-size:19px;}
+.pv-mod .mini-mod-section {padding:0 9px 8px;}
+.pv-mod .mini-mod-label {display:block;color:#555cf4;font-size:5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;}
+.pv-mod .mini-mod-heading {margin:2px 0 5px;font-size:9px;font-weight:800;letter-spacing:-.3px;}
+.pv-mod .mini-mod-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;}
+.pv-mod .mini-mod-card {padding:6px;background:#fff;border:1px solid #e2e6f0;border-radius:6px;min-width:0;}
+.pv-mod .mini-mod-card:first-child {border-top:3px solid #555cf4;}
+.pv-mod .mini-mod-card b {display:block;font-size:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pv-mod .mini-mod-card span {display:block;height:3px;margin-top:4px;border-radius:2px;background:#e2e6f0;}
+.pv-mod .mini-mod-skills {padding:0 9px 8px;}
+.pv-mod .mini-mod-pill {display:inline-block;margin:2px 2px 0 0;padding:2px 5px;border:1px solid #e0ddff;border-radius:99px;background:#f3f1ff;color:#5146d8;font-size:5px;}
+.pv-mod .mini-mod-share {margin:auto 8px 8px;padding:7px 8px;border-radius:6px;background:#202938;color:#fff;font-size:6px;}
+.pv-mod .mini-mod-share span {display:block;color:#d1d5db;font-size:5px;}
+
+/* Full preview: Template 1 mirrors the actual navy banner + gray sidebar layout. */
+.pp-pro {padding:0;background:#e6e8ee;color:#2b2f4a;font-family:"Segoe UI",Arial,sans-serif;line-height:1.5;}
+.pp-pro .simple-page {max-width:960px;margin:0 auto;background:#fff;overflow:hidden;box-shadow:0 18px 50px rgba(29,32,72,.1);}
+.pp-pro .simple-banner {min-height:150px;padding:28px 40px 28px 300px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:#262a5c;color:#fff;}
+.pp-pro .simple-banner h1 {font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:3px;line-height:1.15;text-transform:uppercase;overflow-wrap:anywhere;margin:0;color:#fff;align-self:flex-start;}
+.pp-pro .simple-banner p {margin-top:8px;color:#e2e5f7;font-size:1rem;letter-spacing:1.5px;text-transform:uppercase;}
+.pp-pro .simple-layout {display:grid;grid-template-columns:260px minmax(0,1fr);}
+.pp-pro .simple-sidebar {min-width:0;padding:0 24px 32px;background:#edf1f3;overflow-wrap:anywhere;}
+.pp-pro .simple-photo {width:190px;height:190px;margin:-95px 0 28px 10px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:5px solid #fff;border-radius:50%;background:#dbe6f5;color:#262a5c;font-size:4.5rem;font-weight:700;position:relative;z-index:2;}
+.pp-pro .simple-side {margin-bottom:26px;font-size:.85rem;}
+.pp-pro .simple-side h3 {margin-bottom:12px;padding-bottom:5px;border-bottom:1px solid #c5c9d5;color:#262a5c;font-size:1.05rem;letter-spacing:1.5px;text-transform:uppercase;}
+.pp-pro .simple-side p,.pp-pro .simple-side li {font-size:.82rem;color:#5a5f7a;overflow-wrap:anywhere;white-space:pre-line;}
+.pp-pro .simple-side ul {margin-left:19px;}
+.pp-pro .simple-side li {margin-bottom:6px;}
+.pp-pro .simple-side a {display:block;margin-bottom:7px;color:#2b2f4a;text-decoration:none;overflow-wrap:anywhere;}
+.pp-pro .simple-main {min-width:0;padding:36px 40px 32px 20px;}
+.pp-pro .simple-section {position:relative;margin-bottom:30px;padding-left:44px;min-width:0;overflow-wrap:anywhere;}
+.pp-pro .simple-section:before {content:"";position:absolute;left:14px;top:30px;bottom:-30px;width:2px;background:#c5c9d5;}
+.pp-pro .simple-section:last-child:before {display:none;}
+.pp-pro .simple-dot {position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#262a5c;color:#fff;font-size:12px;}
+.pp-pro .simple-section h2 {font-size:1.2rem;letter-spacing:2px;text-transform:uppercase;color:#262a5c;border-bottom:1px solid #c5c9d5;padding-bottom:5px;margin-bottom:12px;}
+.pp-pro .simple-section p {font-size:.85rem;color:#5a5f7a;white-space:pre-line;overflow-wrap:anywhere;}
+.pp-pro .simple-entry {margin-bottom:15px;font-size:.88rem;white-space:pre-line;overflow-wrap:anywhere;}
+.pp-pro .simple-share {display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:20px 32px;background:#1d2048;color:#fff;}
+.pp-pro .simple-share-copy {min-width:170px;flex:1;}
+.pp-pro .simple-share-copy strong {display:block;font-size:1rem;}
+.pp-pro .simple-share-copy small {display:block;margin-top:3px;color:#d8dced;font-size:.75rem;}
+.pp-pro .simple-share-url {flex:1 1 220px;min-width:0;padding:9px 12px;border:0;border-radius:4px;background:#fff;color:#262a5c;font-size:.78rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pp-pro .simple-action {display:inline-block;padding:9px 13px;border:1px solid #8fa4d8;border-radius:4px;color:#fff;font-size:.78rem;white-space:nowrap;}
+.pp-pro .simple-action.primary {background:#2f6fe0;border-color:#2f6fe0;}
+.pp-pro .simple-action.danger {background:#b42336;border-color:#b42336;}
+.pp-pro .simple-footer {padding:12px;background:#f4f5f9;color:#5a5f7a;text-align:center;font-size:.75rem;}
+
+/* Full preview: Template 2 mirrors the real soft gradient + indigo card design. */
+.pp-mod {padding:16px;background:radial-gradient(circle at 8% 10%,rgba(189,245,220,.35),transparent 23rem),radial-gradient(circle at 92% 25%,rgba(221,224,255,.65),transparent 28rem),#f5f7fb;color:#151a2d;font-family:"DM Sans",Arial,sans-serif;line-height:1.65;}
+.pp-mod .modern-page {max-width:1160px;margin:0 auto;}
+.pp-mod .modern-site-nav {display:flex;align-items:center;justify-content:space-between;gap:24px;width:calc(100% - 12px);min-height:72px;margin:0 auto 12px;padding:12px 18px 12px 24px;border:1px solid #e2e6f0;border-radius:22px;background:rgba(255,255,255,.86);box-shadow:0 10px 35px rgba(26,34,71,.07);}
+.pp-mod .modern-brand {display:inline-flex;align-items:center;gap:9px;color:#151a2d;font-size:1rem;font-weight:800;letter-spacing:-.04em;}
+.pp-mod .modern-mark {display:grid;width:36px;height:36px;place-items:center;border-radius:12px;background:#555cf4;color:#fff;font-size:.8rem;font-weight:800;}
+.pp-mod .modern-nav-links {display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;color:#687087;font-size:.78rem;}
+.pp-mod .modern-hero {display:grid;grid-template-columns:minmax(0,1.1fr) minmax(170px,.7fr);gap:34px;align-items:center;padding:64px 9% 70px;}
+.pp-mod .modern-eyebrow {color:#555cf4;font-size:.76rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;}
+.pp-mod .modern-hero h1 {margin:10px 0 14px;font-size:clamp(2rem,4vw,3.6rem);line-height:1.1;letter-spacing:-.055em;overflow-wrap:anywhere;color:#151a2d;}
+.pp-mod .modern-hero h1 span {color:#555cf4;}
+.pp-mod .modern-hero p {color:#687087;font-size:.92rem;white-space:pre-line;overflow-wrap:anywhere;}
+.pp-mod .modern-contact {display:flex;flex-wrap:wrap;gap:7px 13px;margin-top:18px;color:#555e6d;font-size:.78rem;overflow-wrap:anywhere;}
+.pp-mod .modern-portrait-wrap {position:relative;justify-self:center;width:min(100%,220px);padding:10px;border-radius:26px;background:#e7e9ff;transform:rotate(2deg);}
+.pp-mod .modern-portrait {height:220px;display:grid;place-items:center;border:5px solid #fff;border-radius:20px;background:#e0ddff;color:#5146d8;box-shadow:0 12px 35px #dfe3f5;font-size:5rem;font-weight:800;}
+.pp-mod .modern-section {padding:36px 9%;}
+.pp-mod .modern-kicker {color:#555cf4;font-size:.74rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;}
+.pp-mod .modern-section h2 {margin:5px 0;font-size:clamp(1.5rem,3vw,2rem);letter-spacing:-.04em;color:#151a2d;}
+.pp-mod .modern-section-intro {margin-bottom:20px;color:#6b7280;font-size:.88rem;}
+.pp-mod .modern-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.pp-mod .modern-card {min-width:0;padding:22px;background:#fff;border:1px solid #eceef4;border-radius:12px;overflow-wrap:anywhere;}
+.pp-mod .modern-card.project {border-top:4px solid #635bff;}
+.pp-mod .modern-card h3 {margin-bottom:8px;color:#151a2d;font-size:1rem;letter-spacing:-.025em;}
+.pp-mod .modern-card p {color:#606a79;font-size:.85rem;white-space:pre-line;}
+.pp-mod .modern-project-number {display:block;margin-bottom:8px;color:#555cf4;font-size:.68rem;font-weight:800;letter-spacing:1px;}
+.pp-mod .modern-skill {display:inline-block;margin:0 7px 8px 0;padding:8px 13px;border:1px solid #e0ddff;border-radius:20px;background:#f3f1ff;color:#5146d8;font-size:.8rem;}
+.pp-mod .modern-social a {display:inline-block;margin:5px 14px 5px 0;color:#635bff;font-size:.85rem;overflow-wrap:anywhere;}
+.pp-mod .modern-share {display:grid;grid-template-columns:1fr 1.4fr;align-items:center;gap:18px;margin:10px 9% 30px;padding:24px;border-radius:12px;background:#202938;color:#fff;}
+.pp-mod .modern-share h2 {margin:0 0 5px;color:#fff;font-size:1.15rem;letter-spacing:-.03em;}
+.pp-mod .modern-share p {color:#d1d5db;font-size:.8rem;}
+.pp-mod .modern-share-actions {display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+.pp-mod .modern-share-url {flex:1 1 150px;min-width:0;padding:10px;border-radius:6px;background:#fff;color:#202938;font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pp-mod .modern-action {display:inline-block;padding:9px 11px;border:1px solid #a5abff;border-radius:7px;background:#555cf4;color:#fff;font-size:.72rem;white-space:nowrap;}
+.pp-mod .modern-action.secondary {background:transparent;color:#fff;}
+.pp-mod .modern-action.danger {background:#b42336;border-color:#b42336;}
+.pp-mod .modern-footer {padding:18px;text-align:center;border-top:1px solid #e2e6f0;color:#6b7280;font-size:.78rem;}
+
+@media (max-width:760px) {
+  .pp-pro .simple-banner {padding:24px;text-align:center;}
+  .pp-pro .simple-layout {grid-template-columns:1fr;}
+  .pp-pro .simple-photo {margin:-10px auto 24px;}
+  .pp-pro .simple-main {padding:24px 20px;}
+  .pp-mod .modern-site-nav {flex-wrap:wrap;padding:10px 12px;}
+  .pp-mod .modern-hero {grid-template-columns:1fr;padding:35px 7%;}
+  .pp-mod .modern-portrait-wrap {grid-row:1;width:170px;}
+  .pp-mod .modern-portrait {height:170px;}
+  .pp-mod .modern-grid {grid-template-columns:1fr;}
+  .pp-mod .modern-share {grid-template-columns:1fr;margin:10px 5% 25px;padding:18px;}
 }
 
-.portgen-header nav {
-    min-height: 70px;
-    padding: 12px 32px;
+
+.pp-pro .simple-skill {display:inline-block;margin:0 5px 5px 0;padding:4px 8px;border-radius:20px;background:#edf4ff;color:#245da8;font-size:.7rem;}
+.pp-mod .modern-entry {margin:5px 0 9px;color:#606a79;font-size:.83rem;white-space:pre-line;overflow-wrap:anywhere;}
+
+
+/* Keep preview portraits and miniature thumbnail photos consistent with the saved templates. */
+.pv-pro .mini-pro-photo img,
+.pv-mod .mini-mod-photo img,
+.mini-creative-portrait img,
+.pp-pro .simple-photo img,
+.pp-mod .modern-portrait img,
+.pp-cre .creative-portrait img {
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
 }
+.pv-pro .mini-pro-photo img { border-radius:50%; }
+.pv-mod .mini-mod-photo img { border-radius:9px; }
+.pp-pro .simple-photo img { border-radius:50%; }
+.pp-mod .modern-portrait img { border-radius:14px; }
 
-@media (max-width: 600px) {
-    .portgen-header nav {
-        min-height: 62px;
-        padding: 10px 16px;
-    }
-
-    .portgen-header .logo {
-        font-size: 23px;
-    }
+/* Template 3 preview mirrors the current cream, mint, lilac, coral and yellow design. */
+.pv-cre.mini-creative-page {
+    display:block;
+    padding:0;
+    border:1px solid #d8dfd5;
+    border-radius:7px;
+    overflow:hidden;
+    background:#fbf8f0;
+    color:#27332d;
+    font-family:Inter,Arial,sans-serif;
 }
+.mini-creative-nav { display:flex; justify-content:space-between; align-items:center; gap:5px; padding:7px 9px; border-bottom:1px solid #d8dfd5; font-size:6px; }
+.mini-creative-nav strong { letter-spacing:.6px; }
+.mini-creative-nav strong span { color:#e76b50; }
+.mini-creative-nav small { color:#657168; font-size:4px; text-align:right; }
+.mini-creative-hero { display:grid; grid-template-columns:1.12fr .88fr; gap:5px; padding:7px; }
+.mini-creative-copy { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; min-height:118px; padding:10px; border-radius:3px 18px 3px 3px; background:#cbe7d6; }
+.mini-creative-copy small { margin-bottom:9px; color:#657168; font-size:5px; font-weight:800; letter-spacing:.5px; }
+.mini-creative-copy strong { font-family:Georgia,serif; font-size:18px; line-height:1; overflow-wrap:anywhere; }
+.mini-creative-copy span { margin-top:8px; font-size:5px; color:#42564a; }
+.mini-creative-copy i { margin-top:9px; padding-top:5px; border-top:1px solid rgba(39,51,45,.2); color:#657168; font-size:4px; font-style:normal; }
+.mini-creative-art { position:relative; min-height:118px; padding:11px; overflow:hidden; border-radius:18px 3px 3px 3px; background:#e7def7; }
+.mini-creative-art b { position:absolute; top:9px; right:10px; width:22px; height:22px; border-radius:50%; background:#f4cc68; }
+.mini-creative-portrait { position:absolute; inset:22px 16px 18px; z-index:1; display:grid; place-items:center; overflow:hidden; border:4px solid #fffefa; border-radius:45% 45% 3px 3px; background:#e8a997; color:#27332d; font:700 22px Georgia,serif; transform:rotate(-3deg); }
+.mini-creative-portrait img { transform:rotate(3deg) scale(1.05); }
+.mini-creative-art em { position:absolute; right:5px; bottom:5px; z-index:2; padding:4px 5px; background:#e76b50; color:#fffefa; font:italic 5px Georgia,serif; }
+.mini-creative-marquee { padding:5px; border-top:1px solid #d8dfd5; border-bottom:1px solid #d8dfd5; color:#657168; font-size:5px; font-weight:800; letter-spacing:.5px; text-align:center; }
+.mini-creative-marquee span { color:#e76b50; }
+.mini-creative-cards { display:grid; grid-template-columns:1.3fr .8fr 1fr; gap:4px; padding:7px; }
+.mini-creative-cards div { min-height:35px; padding:6px 5px; background:#fffefa; border:1px solid #d8dfd5; color:#657168; font-size:4px; font-weight:800; }
+.mini-creative-cards div:nth-child(2) { margin-top:5px; background:#f4cc68; border:0; }
+.mini-creative-cards div:nth-child(3) { margin-top:-3px; background:#e76b50; color:#fffefa; border:0; }
 
-/* Shared PortGen homepage theme refinements */
-body { font-family:'Lora',serif; }
-.logo, .brand, .logo-text { font-family:'Sansation',sans-serif; }
-button, .btn, .choose-btn { transition:background-color .25s ease, border-color .25s ease, box-shadow .25s ease, transform .25s ease; }
-button:hover, .btn:hover, .choose-btn:hover { box-shadow:0 0 16px var(--accent-glow, rgba(56,189,248,.25)); }
+.pp-cre { padding:0; background:#fbf8f0; color:#27332d; font-family:Inter,"Segoe UI",Arial,sans-serif; line-height:1.6; }
+.pp-cre .creative-page { max-width:1240px; margin:0 auto; background:#fbf8f0; }
+.pp-cre .creative-header { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:18px clamp(16px,4vw,42px); border-bottom:1px solid #d8dfd5; background:rgba(255,254,250,.72); }
+.pp-cre .creative-brand { color:#27332d; font-size:11px; font-weight:900; letter-spacing:1px; white-space:nowrap; }
+.pp-cre .creative-brand span { color:#e76b50; }
+.pp-cre .creative-header-links { display:flex; flex-wrap:wrap; justify-content:center; gap:15px; color:#657168; font-size:8px; font-weight:800; letter-spacing:.8px; }
+.pp-cre .creative-header small { color:#657168; font-size:7px; text-align:right; }
+.pp-cre .creative-header small strong { display:block; color:#e76b50; font-size:8px; }
+.pp-cre .creative-content { width:min(calc(100% - 32px),1160px); margin:22px auto 34px; }
+.pp-cre .creative-hero { display:grid; grid-template-columns:minmax(0,1.12fr) minmax(220px,.88fr); gap:14px; align-items:stretch; }
+.pp-cre .creative-hero-copy { position:relative; display:flex; min-height:330px; flex-direction:column; align-items:flex-start; justify-content:center; padding:clamp(22px,4vw,48px); background:#cbe7d6; border-radius:4px 58px 4px 4px; overflow:hidden; }
+.pp-cre .creative-eyebrow { display:flex; align-items:center; gap:8px; margin-bottom:16px; color:#657168; font-size:8px; font-weight:800; letter-spacing:1px; text-transform:uppercase; }
+.pp-cre .creative-eyebrow:before { width:18px; height:2px; content:""; background:#e76b50; }
+.pp-cre .creative-hero-copy h1 { max-width:100%; margin:0; color:#27332d; font:700 clamp(34px,5.5vw,68px)/.98 Georgia,"Times New Roman",serif; letter-spacing:-.06em; overflow-wrap:anywhere; }
+.pp-cre .creative-hero-copy h1 span { color:#e76b50; font-style:italic; font-weight:500; }
+.pp-cre .creative-hero-copy p { margin-top:16px; color:#42564a; font-size:11px; white-space:pre-line; overflow-wrap:anywhere; }
+.pp-cre .creative-footnote { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; width:100%; margin-top:22px; padding-top:8px; border-top:1px solid rgba(39,51,45,.2); color:#657168; font-size:6px; font-weight:800; letter-spacing:.5px; }
+.pp-cre .creative-hero-art { position:relative; min-height:330px; padding:20px; overflow:hidden; background:#e7def7; border-radius:58px 4px 4px 4px; }
+.pp-cre .creative-art-shape { position:absolute; top:22px; right:22px; width:68px; height:68px; border-radius:50%; background:#f4cc68; }
+.pp-cre .creative-portrait { position:absolute; inset:44px 32px 42px; z-index:1; display:grid; place-items:center; overflow:hidden; border:8px solid #fffefa; border-radius:46% 46% 4px 4px; background:#e8a997; color:#27332d; font:italic 86px Georgia,serif; transform:rotate(-3deg); box-shadow:0 12px 28px rgba(39,51,45,.09); }
+.pp-cre .creative-portrait img { transform:rotate(3deg) scale(1.05); }
+.pp-cre .creative-art-note { position:absolute; right:10px; bottom:10px; z-index:2; max-width:110px; padding:8px 9px; background:#e76b50; color:#fffefa; font:italic 10px/1.2 Georgia,serif; transform:rotate(3deg); }
+.pp-cre .creative-marquee { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 14px; margin:12px 0 16px; padding:9px 6px; border-top:1px solid #d8dfd5; border-bottom:1px solid #d8dfd5; color:#657168; font-size:7px; font-weight:800; letter-spacing:1px; text-align:center; }
+.pp-cre .creative-marquee span { color:#e76b50; font-size:11px; }
+.pp-cre .creative-story-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:10px; align-items:start; }
+.pp-cre .creative-story-card { min-width:0; padding:clamp(16px,2.5vw,28px); overflow-wrap:anywhere; }
+.pp-cre .creative-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px; margin-bottom:16px; color:#657168; font-size:6px; font-weight:800; letter-spacing:.6px; }
+.pp-cre .creative-story-card h2 { margin:0 0 10px; color:#27332d; font:600 clamp(18px,2.4vw,30px)/1.05 Georgia,"Times New Roman",serif; letter-spacing:-.04em; }
+.pp-cre .creative-story-card p { margin:0; color:inherit; font-size:10px; white-space:pre-line; overflow-wrap:anywhere; }
+.pp-cre .creative-about { grid-column:span 7; min-height:165px; background:#fffefa; border:1px solid #d8dfd5; border-radius:4px 4px 50px 4px; }
+.pp-cre .creative-education { grid-column:span 5; min-height:165px; margin-top:14px; background:#f4cc68; }
+.pp-cre .creative-experience { grid-column:span 5; min-height:155px; background:#e7def7; border-radius:4px 50px 4px 4px; }
+.pp-cre .creative-projects { grid-column:span 7; min-height:185px; background:#e76b50; color:#fffefa; }
+.pp-cre .creative-projects h2 { color:#fffefa; }
+.pp-cre .creative-projects .creative-meta { color:rgba(255,254,250,.85); }
+.pp-cre .creative-project-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.pp-cre .creative-project-list .creative-project-item { padding:10px; min-height:0; background:rgba(255,254,250,.14); border:1px solid rgba(255,254,250,.35); }
+.pp-cre .creative-project-list .creative-project-item h2 { font-size:13px; margin-bottom:5px; }
+.pp-cre .creative-project-list .creative-project-item p { font-size:8px; }
+.pp-cre .creative-project-list .creative-project-item .creative-meta { font-size:5px; margin-bottom:6px; }
+.pp-cre .creative-skills { grid-column:span 4; min-height:135px; background:#cbe7d6; }
+.pp-cre .creative-skills-list { display:flex; flex-wrap:wrap; gap:6px; }
+.pp-cre .creative-skill { padding:5px 8px; border:1px solid rgba(39,51,45,.35); border-radius:999px; font-size:8px; font-weight:700; }
+.pp-cre .creative-contact { grid-column:span 8; min-height:135px; background:#fffefa; border:1px solid #d8dfd5; }
+.pp-cre .creative-contact-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.pp-cre .creative-contact-item { min-width:0; padding-top:7px; border-top:1px solid #d8dfd5; overflow-wrap:anywhere; font-size:8px; }
+.pp-cre .creative-contact-item strong { display:block; color:#e76b50; font-size:6px; letter-spacing:.7px; margin-bottom:3px; }
+.pp-cre .creative-actions { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:18px; padding:14px; background:#27332d; color:#fffefa; }
+.pp-cre .creative-actions div { flex:1; min-width:180px; }
+.pp-cre .creative-actions strong { display:block; font-size:8px; letter-spacing:.7px; }
+.pp-cre .creative-actions p { margin-top:3px; color:#d7e0d8; font-size:8px; overflow-wrap:anywhere; }
+.pp-cre .creative-actions > span { padding:7px 9px; border:1px solid rgba(255,254,250,.55); font-size:7px; white-space:nowrap; }
+.pp-cre .creative-actions > span.danger { background:#b42336; border-color:#b42336; }
+.pp-cre .creative-footer { display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; margin-top:17px; padding-top:12px; border-top:1px solid #d8dfd5; color:#657168; font-size:7px; letter-spacing:.6px; }
+@media (max-width:760px) {
+ .pp-cre .creative-header { flex-wrap:wrap; }
+ .pp-cre .creative-header small { display:none; }
+ .pp-cre .creative-hero { grid-template-columns:1fr; }
+ .pp-cre .creative-hero-art { min-height:270px; }
+ .pp-cre .creative-story-grid { display:block; }
+ .pp-cre .creative-story-card { margin-bottom:10px; }
+ .pp-cre .creative-project-list,.pp-cre .creative-contact-list { grid-template-columns:1fr; }
+ .mini-creative-header { flex-wrap:wrap; }
+}
 
 </style>
  </head>
@@ -1786,17 +2030,7 @@ button:hover, .btn:hover, .choose-btn:hover { box-shadow:0 0 16px var(--accent-g
   </div>
   <canvas id="waveCanvas">
   </canvas>
-
-  <header class="portgen-header">
-   <nav aria-label="Main navigation">
-    <a class="logo" href="{{ route('home') }}">PortGen</a>
-    <button class="theme-toggle" id="themeToggleBtn" type="button" title="Toggle light/dark mode" aria-label="Toggle light/dark mode">
-     <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path></svg>
-     <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
-    </button>
-   </nav>
-  </header>
-
+  @include('partials.portgen-navbar')
   <div class="templates-wrapper">
    <div class="hero-text-create">
     <h1>
@@ -1807,248 +2041,84 @@ button:hover, .btn:hover, .choose-btn:hover { box-shadow:0 0 16px var(--accent-g
     </p>
    </div>
    <div class="tpl-grid">
-    <!-- Professional -->
+    <!-- Simple (Template 1) -->
     <div class="glass-card tpl-card" id="tpl-pro">
-     <div class="tpl-frame" onclick="openPreview('Professional')" title="Click to preview">
+     <div class="tpl-frame" onclick="openPreview('Simple')" title="Click to preview">
       <div class="pv pv-pro">
-       <div class="pv-nav">
-        <span class="pv-brand">
-         <span class="pv-av">
-          Y
-         </span>
-         Your Name
-        </span>
-        <span>
-         <i>
-          Home
-         </i>
-         <i>
-          About
-         </i>
-         <i>
-          Skills
-         </i>
-        </span>
+       <div class="mini-pro-banner"><strong>{{ $previewName }}</strong><small>PERSONAL PORTFOLIO</small></div>
+       <div class="mini-pro-layout">
+        <aside class="mini-pro-sidebar">
+         <div class="mini-pro-photo">@if ($previewPhoto)<img src="{{ $previewPhoto }}" alt="">@else{{ $previewInitial }}@endif</div>
+         <div class="mini-pro-sidegroup"><b>Contact</b><span>hello@example.com</span><span>+63 900 000 0000</span></div>
+         <div class="mini-pro-sidegroup"><b>Skills</b><span>HTML · CSS · PHP</span></div>
+         <div class="mini-pro-sidegroup"><b>Projects</b><span>My project</span></div>
+        </aside>
+        <main class="mini-pro-main">
+         <div class="mini-pro-section"><b>1 &nbsp; About Me</b><span></span><span style="width:80%"></span></div>
+         <div class="mini-pro-section"><b>2 &nbsp; Work Experience</b><span></span><span style="width:68%"></span></div>
+         <div class="mini-pro-section"><b>3 &nbsp; Education</b><span></span><span style="width:73%"></span></div>
+        </main>
        </div>
-       <div class="pv-hero">
-        <div class="pv-photo">
-         Y
-        </div>
-        <div>
-         <small>
-          HELLO, I'M
-         </small>
-         <strong>
-          Your Name
-         </strong>
-         <div class="ln">
-         </div>
-         <div class="ln" style="width:70%">
-         </div>
-        </div>
-       </div>
-       <div class="pv-g3">
-        <div class="pv-box">
-         About Me
-         <div class="ln">
-         </div>
-        </div>
-        <div class="pv-box">
-         Education
-         <div class="ln">
-         </div>
-        </div>
-        <div class="pv-box">
-         Experience
-         <div class="ln">
-         </div>
-        </div>
-       </div>
-       <div>
-        <span class="pv-pill">
-         HTML
-        </span>
-        <span class="pv-pill">
-         CSS
-        </span>
-        <span class="pv-pill">
-         PHP
-        </span>
-       </div>
-       <div class="pv-share">
-        Share Your Portfolio
-       </div>
+       <div class="mini-pro-share">Share Your Portfolio <em>Copy&nbsp; Edit&nbsp; Delete</em></div>
       </div>
      </div>
      <div class="tpl-info">
-      <h3>
-       Professional
-      </h3>
-      <p class="desc">
-       A clean, organized layout with a navy and blue palette, a profile photo, and clear portfolio cards.
-      </p>
+      <h3>Simple</h3>
+      <p class="desc">A straightforward navy banner, soft gray sidebar, round profile photo, and simple timeline sections.</p>
       <div class="tpl-btns">
-       <button class="btn-primary" onclick="openPreview('Professional')">
-        Preview
-       </button>
-       <button class="btn-primary" onclick="selectTemplate('Professional')">
-        Choose
-       </button>
+       <button class="btn-primary" onclick="openPreview('Simple')">Preview</button>
+       <button class="btn-primary" onclick="selectTemplate('Simple')">Choose</button>
       </div>
      </div>
     </div>
-    <!-- Modern -->
+    <!-- Modern (Template 2) -->
     <div class="glass-card tpl-card" id="tpl-mod">
      <div class="tpl-frame" onclick="openPreview('Modern')" title="Click to preview">
       <div class="pv pv-mod">
-       <div class="pv-nav">
-        <span>
-         Your Name
-        </span>
-        <span>
-         <i>
-          About
-         </i>
-         <i>
-          Projects
-         </i>
-         <i>
-          Skills
-         </i>
-        </span>
+       <div class="mini-mod-nav">
+        <strong class="mini-mod-brand"><span class="mini-mod-mark">PG</span>{{ $previewName }}</strong>
+        <span class="mini-mod-links">About &nbsp; Projects &nbsp; Skills</span>
        </div>
-       <div class="pv-hero">
+       <section class="mini-mod-hero">
         <div>
-         <small>
-          Welcome to my portfolio
-         </small>
-         <strong>
-          Hello, I'm Your Name.
-         </strong>
-         <span class="pv-btn">
-          Contact Me
-         </span>
+         <span class="mini-mod-kicker">Personal portfolio</span>
+         <strong class="mini-mod-title">Hello, I'm<br><span class="mini-mod-accent">Your Name.</span></strong>
+         <span class="mini-mod-copy">A snapshot of my work and the things I love creating.</span>
         </div>
-        <div class="pv-photo">
-         Y
+        <div class="mini-mod-photo">@if ($previewPhoto)<img src="{{ $previewPhoto }}" alt="">@else{{ $previewInitial }}@endif</div>
+       </section>
+       <section class="mini-mod-section">
+        <span class="mini-mod-label">Selected work</span>
+        <div class="mini-mod-heading">Projects I've built.</div>
+        <div class="mini-mod-grid">
+         <div class="mini-mod-card"><b>Project title</b><span></span><span style="width:70%"></span></div>
+         <div class="mini-mod-card"><b>Another project</b><span></span><span style="width:62%"></span></div>
         </div>
-       </div>
-       <div class="pv-head">
-        Featured Projects
-       </div>
-       <div class="pv-g">
-        <div class="pv-box">
-         Project
-         <div class="ln">
-         </div>
-        </div>
-        <div class="pv-box">
-         Project
-         <div class="ln">
-         </div>
-        </div>
-       </div>
-       <div>
-        <span class="pv-pill">
-         HTML
-        </span>
-        <span class="pv-pill">
-         CSS
-        </span>
-        <span class="pv-pill">
-         PHP
-        </span>
-       </div>
+       </section>
+       <div class="mini-mod-skills"><span class="mini-mod-pill">HTML</span><span class="mini-mod-pill">CSS</span><span class="mini-mod-pill">PHP</span></div>
+       <div class="mini-mod-share">Pass it along.<span>Share · Edit · Delete</span></div>
       </div>
      </div>
      <div class="tpl-info">
-      <h3>
-       Modern
-      </h3>
-      <p class="desc">
-       A bright, minimal design with indigo accents, a bold introduction, and featured project cards.
-      </p>
+      <h3>Modern</h3>
+      <p class="desc">A soft gradient backdrop, rounded navigation, bold indigo introduction, and project cards with crisp accent borders.</p>
       <div class="tpl-btns">
-       <button class="btn-primary" onclick="openPreview('Modern')">
-        Preview
-       </button>
-       <button class="btn-primary" onclick="selectTemplate('Modern')">
-        Choose
-       </button>
+       <button class="btn-primary" onclick="openPreview('Modern')">Preview</button>
+       <button class="btn-primary" onclick="selectTemplate('Modern')">Choose</button>
       </div>
      </div>
     </div>
     <!-- Creative -->
     <div class="glass-card tpl-card" id="tpl-cre">
      <div class="tpl-frame" onclick="openPreview('Creative')" title="Click to preview">
-      <div class="pv pv-cre">
-       <div class="pv-nav">
-        <span class="pv-brand">
-         <span>
-          ✳
-         </span>
-         Your Name
-        </span>
-        <span>
-         <i>
-          About
-         </i>
-         <i>
-          Projects
-         </i>
-         <i>
-          Skills
-         </i>
-        </span>
+      <div class="pv pv-cre mini-creative-page">
+       <div class="mini-creative-nav"><strong>MYFOLIO <span>/ CREATIVE</span></strong><small>CREATIVE EDITION / 03</small></div>
+       <div class="mini-creative-hero">
+        <div class="mini-creative-copy"><small>A LITTLE ABOUT ME</small><strong>{{ $previewName }}</strong><span>A collection of ideas and things worth sharing.</span><i>PORTFOLIO NO. {{ str_pad((string) $portfolio->id, 3, '0', STR_PAD_LEFT) }}</i></div>
+        <div class="mini-creative-art"><b></b><div class="mini-creative-portrait">@if ($previewPhoto)<img src="{{ $previewPhoto }}" alt="">@else{{ $previewInitial }}@endif</div><em>A work in progress</em></div>
        </div>
-       <span class="pv-tag">
-        CREATIVE PORTFOLIO ✦
-       </span>
-       <div class="pv-hero">
-        <div>
-         <strong>
-          Hey, I'm
-          <br/>
-          <span>
-           Your Name
-          </span>
-         </strong>
-         <div style="margin-top:7px">
-          <span class="pv-btn">
-           Let's Connect &nearrow;
-          </span>
-          <span class="pv-btn o">
-           Explore
-          </span>
-         </div>
-        </div>
-        <div class="pv-photo">
-         Y
-        </div>
-       </div>
-       <div class="pv-head">
-        Things I've Created ✳
-       </div>
-       <div class="pv-g">
-        <div class="pv-box b1">
-         PROJECT 01
-         <div class="ln">
-         </div>
-        </div>
-        <div class="pv-box b2">
-         PROJECT 02
-         <div class="ln">
-         </div>
-        </div>
-       </div>
-       <div>
-        <span class="pv-pill">
-         HTML
-        </span>
-        <span class="pv-pill">
-         CSS
-        </span>
-       </div>
+       <div class="mini-creative-marquee">✳ STAY CURIOUS　✳ MAKE THINGS　✳ KEEP LEARNING</div>
+       <div class="mini-creative-cards"><div>01 / THE INTRODUCTION</div><div>02 / EDUCATION</div><div>03 / PROJECTS</div></div>
       </div>
      </div>
      <div class="tpl-info">
@@ -2056,7 +2126,7 @@ button:hover, .btn:hover, .choose-btn:hover { box-shadow:0 0 16px var(--accent-g
        Creative
       </h3>
       <p class="desc">
-       A playful design on a warm cream background with lime and peach cards, bold type, and a unique layout.
+       An editorial layout with a mint introduction panel, lilac portrait panel, yellow accents, and staggered story cards.
       </p>
       <div class="tpl-btns">
        <button class="btn-primary" onclick="openPreview('Creative')">
@@ -2118,104 +2188,196 @@ button:hover, .btn:hover, .choose-btn:hover { box-shadow:0 0 16px var(--accent-g
   </div>
   <script>
    
-// Template preview (uses the details saved on the Create Portfolio page)
-const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));  function getData(){ let f={}; try{f=JSON.parse(sessionStorage.getItem('portgen_data'))||{}}catch(e){} const g=k=>(f[k]||'').toString().trim(); return {name:g('fullName')||'Your Name',email:g('email'),phone:g('phone'),address:g('address'), about:g('about')||'A short bio about you, your passion, and what drives you will appear here.', education:g('education')||'Your degree, university, and graduation year.', skills:g('skills')||'HTML, CSS, JavaScript, PHP', experience:g('experience')||'Your previous roles and companies.', projects:g('projects')||'Notable projects you have built.', links:g('links')||'GitHub, LinkedIn, Personal Website'}; }  function renderTemplate(key,d){ const n=esc(d.name), ini=esc(d.name.charAt(0).toUpperCase()); const split=(t,re)=>t.split(re).map(x=>x.trim()).filter(Boolean); const skills=split(d.skills,/[,\n]/), projects=split(d.projects,/[\r\n]+/), links=split(d.links,/[\r\n,]+/); const addr=d.address&&d.address.toUpperCase()!=='NONE'?d.address:''; const contact=[d.email,d.phone,addr].filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join(''); const sk=skills.map(x=>`<span class="sk">${esc(x)}</span>`).join(''); const lk=(suffix)=>links.map(x=>`<a>${esc(x)}${suffix||''}</a>`).join(''); const url=window.location.origin+'/portfolio/'+{{ (int) $portfolio->id }}, year=new Date().getFullYear();  if(key==='Professional'){ const pj=projects.map(x=>`<div class="pi"><h3>${esc(x)}</h3><p>Project included in my portfolio.</p></div>`).join(''); const card=(i,t,b)=>`<section class="card"><h2><b>${i}</b> ${t}</h2>${b}</section>`; return `<div class="pp pp-pro"> <div class="nav"><div class="brand"><span class="bi">${ini}</span>${n}</div><div class="nl"><span>Home</span><span>About</span><span>Education</span><span>Experience</span><span>Skills</span><span>Projects</span></div></div> <div class="hero"><div class="pw"><div class="ph">${ini}</div></div><div><div class="eb">HELLO, I'M</div><h1>${n}</h1><p class="hd">${esc(d.about)}</p><div class="ci">${contact}</div></div><div class="hn">Turning ideas<br>into real projects.<span></span></div></div> <div class="cg">${card('♙','About Me',`<p>${esc(d.about)}</p>`)}${card('◇','Educational Background',`<p>${esc(d.education)}</p>`)}${card('▣','Work Experience',`<p>${esc(d.experience)}</p>`)}${card('⚙','Skills',`<div>${sk}</div>`)}${card('&lt;/&gt;','Projects',pj)}${card('↗','Social Media and Websites',`<div class="sl">${lk()}</div>`)}</div> <section class="share"><div><h2>Share Your Portfolio</h2><p>Copy your portfolio link to share it with others.</p></div><div class="sr"><i>${url}</i><span class="btn">Copy Link</span></div><div><span class="btn ed">Edit Portfolio</span></div></section> <div class="foot">© ${year} ${n}. All rights reserved.</div></div>`; }  if(key==='Modern'){ const pj=projects.map(x=>`<article class="pc top"><h3>${esc(x)}</h3><p>Project included in my portfolio.</p></article>`).join(''); return `<div class="pp pp-mod"> <div class="nav"><div class="logo">${n}</div><div class="nl"><span>About</span><span>Projects</span><span>Background</span><span>Skills</span></div></div> <div class="hero"><div class="ht"><div class="eb">Welcome to my portfolio</div><h1>Hello, I'm ${n}.</h1><p>${esc(d.about)}</p><div class="ci">${contact}</div>${d.email ? '<span class="btn">Contact Me</span>' : ''}</div><div class="ph">${ini}</div></div> <section class="sec"><div class="sh"><span>My work</span><h2>Featured Projects</h2><p>Some of the projects I have worked on.</p></div><div class="g2">${pj}</div></section> <section class="sec"><div class="sh"><span>My journey</span><h2>Background</h2></div><div class="g2"><article class="pc"><h3>Educational Background</h3><p>${esc(d.education)}</p></article><article class="pc"><h3>Work Experience</h3><p>${esc(d.experience)}</p></article></div></section> <section class="sec"><div class="sh"><span>What I can do</span><h2>My Skills</h2></div><div>${sk}</div></section> <section class="sec"><div class="sh"><span>Find me online</span><h2>Social Media and Websites</h2></div><div class="sl">${lk()}</div></section> <section class="share"><h2>Share My Portfolio</h2><p>Share this link with friends, classmates, or potential employers.</p><div class="sr"><i>${url}</i><span class="btn">Copy Link</span></div></section> <div class="foot">© ${year} ${n}. All rights reserved.</div></div>`; }  const pj=projects.map((x,i)=>`<article class="pc pj"><span class="pn">PROJECT ${String(i+1).padStart(2,'0')}</span><h3>${esc(x)}</h3><p>A project featured in my portfolio.</p></article>`).join(''); return `<div class="pp pp-cre"> <div class="nav"><div class="brand"><span>✳</span> ${n}</div><div class="nl"><span>Home</span><span>About</span><span>Projects</span><span>Skills</span><span>My Journey</span></div></div> <div class="hero"><div><span class="tag">CREATIVE PORTFOLIO ✦</span><h1>Hey, I'm<br><span>${n}</span></h1><p class="hd">${esc(d.about)}</p><div class="btns">${d.email ? '<span class="btn">Let&apos;s Connect ↗</span>' : ''}<span class="btn o">Explore My Work</span></div><div class="ci">${d.phone ? `<span>Contact: ${esc(d.phone)}</span>` : ''}${addr?`<span>${esc(addr)}</span>`:''}</div></div><div class="pa"><div class="ph">${ini}</div><div class="stk">LET'S<br>CREATE!</div></div></div> <section class="sec"><div class="sh"><h2>A Little About Me</h2><p>THE PERSON BEHIND THE WORK</p></div><div class="about"><h2>Curious mind. Creative ideas.</h2><p>${esc(d.about)}</p></div></section> <section class="sec"><div class="sh"><h2>Things I've Created ✳</h2><p>A SELECTION OF MY PROJECTS</p></div><div class="g2">${pj}</div></section> <section class="sec"><div class="sh"><h2>My Journey</h2><p>LEARNING, GROWING, CREATING</p></div><div class="g2"><article class="pc"><h3>🎓 Education</h3><p>${esc(d.education)}</p></article><article class="pc"><h3>✦ Work Experience</h3><p>${esc(d.experience)}</p></article></div></section> <section class="sec"><div class="sh"><h2>My Creative Toolkit</h2><p>SKILLS AND THINGS I KNOW</p></div><div>${sk}</div></section> <section class="sec"><div class="sh"><h2>Find Me Online ↗</h2><p>LET'S STAY CONNECTED</p></div><div class="sl">${lk(' ↗')}</div></section> <section class="share"><h2>Like What You See? ✳</h2><p>Share this portfolio with others.</p><div class="sr"><i>${url}</i><span class="btn">Copy Portfolio Link</span></div></section> <div class="foot">Made with creativity ✳ | © ${year} ${n}</div></div>`; }  function openPreview(name){ document.getElementById('pvTitle').textContent=name+' template'; const body=document.getElementById('pvBody'); body.innerHTML=renderTemplate(name,getData()); body.scrollTop=0; document.getElementById('pvChoose').onclick=()=>{closePreview();selectTemplate(name)}; document.getElementById('previewOverlay').classList.add('open'); } function closePreview(){document.getElementById('previewOverlay').classList.remove('open')} addEventListener('keydown',e=>{if(e.key==='Escape')closePreview()});  
-// Template selection
-let selectedTemplate=null; function selectTemplate(name){ selectedTemplate=name; const ids={Professional:'template1',Modern:'template2',Creative:'template3'}; document.getElementById('selectedTemplateInput').value=ids[name]||'template1'; document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('selected')); const card=document.getElementById('tpl-'+({Professional:'pro',Modern:'mod',Creative:'cre'}[name]||'pro')); if(card) card.classList.add('selected'); document.getElementById('modalDesc').textContent='You selected the '+name+' template. Continue to apply it to your portfolio.'; document.getElementById('selectionModal').classList.add('open'); } function closeModal() {
-    document.getElementById('selectionModal').classList.remove('open');
-    const form = document.getElementById('templateSelectionForm');
-    if (form.requestSubmit) {
-        form.requestSubmit();
-    } else {
-        form.submit();
-    }
-}  
-// Theme toggle (remembered between visits)
-const html = document.documentElement;
-function setTheme(theme) {
-    html.setAttribute('data-theme', theme);
-    try { localStorage.setItem('portgen_theme', theme); } catch (error) {}
-}
-let savedTheme = 'dark';
-try { savedTheme = localStorage.getItem('portgen_theme') || 'dark'; } catch (error) {}
-setTheme(savedTheme);
+// ---- Live previews follow the current Template 1, Template 2, and Template 3 layouts ----
+const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[char]));
 
-// Theme toggle button is optional; the page still works if it is absent.
-const themeToggleButton = document.getElementById('themeToggleBtn');
-if (themeToggleButton) {
-    themeToggleButton.addEventListener('click', () => {
-        setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-    });
-}  
-// Animated wave background
+const portgenPreviewSource = @json($previewData);
+
+function getData() {
+    const source = portgenPreviewSource || {};
+    const get = (key) => String(source[key] ?? '').trim();
+
+    return {
+        name: get('name') || 'Your Name',
+        email: get('email'),
+        phone: get('phone'),
+        address: get('address'),
+        about: get('about') || 'A short introduction about yourself, your interests, and what you enjoy creating.',
+        education: get('education') || 'Your education details will appear here.',
+        skills: get('skills') || 'HTML, CSS, PHP',
+        experience: get('experience') || 'Your work or volunteer experience will appear here.',
+        projects: get('projects') || 'A project you have worked on.',
+        links: get('links') || 'GitHub, LinkedIn, Personal Website',
+        photo: get('photo')
+    };
+}
+
+function renderTemplate(key, data) {
+    const name = esc(data.name);
+    const initial = esc((data.name || 'Y').charAt(0).toUpperCase());
+    const portraitMarkup = data.photo ? `<img src="${esc(data.photo)}" alt="${name}">` : initial;
+    const lines = (value, regex = /[\r\n]+/) => String(value || '').split(regex).map((item) => item.trim()).filter(Boolean);
+    const skills = lines(data.skills, /[,;\r\n]+/);
+    const projects = lines(data.projects);
+    const education = lines(data.education);
+    const experience = lines(data.experience);
+    const links = lines(data.links, /[\r\n,]+/);
+    const location = data.address && data.address.toUpperCase() !== 'NONE' ? data.address : '';
+    const contacts = [data.email, data.phone, location].filter(Boolean);
+    const portfolioUrl = window.location.origin + '/portfolio/' + {{ (int) $portfolio->id }};
+    const year = new Date().getFullYear();
+    const skillTags = skills.map((skill) => `<span class="${key === 'Modern' ? 'modern-skill' : 'simple-skill'}">${esc(skill)}</span>`).join('');
+
+    if (key === 'Simple' || key === 'Professional') {
+        const sideContacts = contacts.length
+            ? contacts.map((item) => `<p>${esc(item)}</p>`).join('')
+            : '<p>Add your contact information to show it here.</p>';
+        const sideProjects = projects.map((project) => `<p>${esc(project)}</p>`).join('') || '<p>Your projects will appear here.</p>';
+        const sideLinks = links.map((link) => `<a href="#social">${esc(link)}</a>`).join('') || '<p>Add social links to connect with visitors.</p>';
+        const workItems = experience.map((item) => `<div class="simple-entry">${esc(item)}</div>`).join('') || '<p>Your work experience will appear here.</p>';
+        const educationItems = education.map((item) => `<div class="simple-entry">${esc(item)}</div>`).join('') || '<p>Your educational background will appear here.</p>';
+
+        return `<div class="pp pp-pro"><div class="simple-page">
+            <header class="simple-banner"><h1>${name}</h1><p>Personal Portfolio</p></header>
+            <div class="simple-layout">
+                <aside class="simple-sidebar">
+                    <div class="simple-photo">${portraitMarkup}</div>
+                    <div class="simple-side"><h3>Contact</h3>${sideContacts}</div>
+                    <div class="simple-side"><h3>Skills</h3>${skillTags ? `<ul>${skills.map((skill) => `<li>${esc(skill)}</li>`).join('')}</ul>` : '<p>Your skills will appear here.</p>'}</div>
+                    <div class="simple-side"><h3>Projects</h3>${sideProjects}</div>
+                    <div class="simple-side" id="social"><h3>Social Links</h3>${sideLinks}</div>
+                </aside>
+                <main class="simple-main">
+                    <section class="simple-section"><span class="simple-dot">1</span><h2>About Me</h2><p>${esc(data.about)}</p></section>
+                    <section class="simple-section"><span class="simple-dot">2</span><h2>Work Experience</h2>${workItems}</section>
+                    <section class="simple-section"><span class="simple-dot">3</span><h2>Educational Background</h2>${educationItems}</section>
+                </main>
+            </div>
+            <div class="simple-share"><div class="simple-share-copy"><strong>Share Your Portfolio</strong><small>Copy your portfolio link to share it with others.</small></div><span class="simple-share-url">${esc(portfolioUrl)}</span><span class="simple-action primary">Copy Link</span><span class="simple-action">Edit Portfolio</span><span class="simple-action danger">Delete Portfolio</span></div>
+            <footer class="simple-footer">© ${year} ${name}. All rights reserved.</footer>
+        </div></div>`;
+    }
+
+    if (key === 'Modern') {
+        const projectCards = projects.map((project, index) => `<article class="modern-card project"><span class="modern-project-number">PROJECT ${String(index + 1).padStart(2, '0')}</span><h3>${esc(project.split(/\s*[:|]\s*/, 1)[0])}</h3><p>${esc(project.includes(':') ? project.slice(project.indexOf(':') + 1).trim() : 'A project included in my portfolio.')}</p></article>`).join('') || '<article class="modern-card project"><span class="modern-project-number">YOUR WORK</span><h3>Featured project</h3><p>Your project description will appear here.</p></article>';
+        const contactList = contacts.map((item) => `<span>${esc(item)}</span>`).join('');
+        const educationText = education.map((item) => `<div class="modern-entry">${esc(item)}</div>`).join('') || '<p>Add your degree, school, and graduation year to complete this section.</p>';
+        const experienceText = experience.map((item) => `<div class="modern-entry">${esc(item)}</div>`).join('') || '<p>Add your previous roles or relevant experience here.</p>';
+        const socialLinks = links.map((link) => `<a href="#social">${esc(link)}</a>`).join('') || '<a href="#social">Add your social links</a>';
+
+        return `<div class="pp pp-mod"><div class="modern-page">
+            <nav class="modern-site-nav"><div class="modern-brand"><span class="modern-mark">PG</span>${name}</div><div class="modern-nav-links"><span>About</span><span>Projects</span><span>Background</span><span>Skills</span><span>Social</span></div></nav>
+            <section class="modern-hero"><div><span class="modern-eyebrow">Personal portfolio</span><h1>Hello, I'm <span>${name}.</span></h1><p>A snapshot of my work, experience, and the things I love creating.</p><p>${esc(data.about)}</p><div class="modern-contact">${contactList}</div></div><div class="modern-portrait-wrap"><div class="modern-portrait">${portraitMarkup}</div></div></section>
+            <section class="modern-section"><span class="modern-kicker">Selected work</span><h2>Projects I've built.</h2><p class="modern-section-intro">A few projects that highlight my skills, ideas, and creativity.</p><div class="modern-grid">${projectCards}</div></section>
+            <section class="modern-section"><span class="modern-kicker">The journey</span><h2>Background &amp; experience.</h2><p class="modern-section-intro">The education and experiences that have helped me grow.</p><div class="modern-grid"><article class="modern-card"><h3>01 &nbsp; Education</h3>${educationText}</article><article class="modern-card"><h3>02 &nbsp; Experience</h3>${experienceText}</article></div></section>
+            <section class="modern-section"><span class="modern-kicker">What I work with</span><h2>Skills &amp; tools.</h2><p class="modern-section-intro">The tools, technologies, and abilities I bring to a project.</p>${skillTags}</section>
+            <section class="modern-section modern-social" id="social"><span class="modern-kicker">Around the web</span><h2>Let's connect.</h2><div>${socialLinks}</div></section>
+            <section class="modern-share"><div><h2>Pass it along.</h2><p>Share your portfolio with classmates, recruiters, or collaborators.</p></div><div class="modern-share-actions"><span class="modern-share-url">${esc(portfolioUrl)}</span><span class="modern-action">Copy link</span><span class="modern-action secondary">Edit portfolio</span><span class="modern-action danger">Delete portfolio</span></div></section>
+            <footer class="modern-footer">© ${year} ${name}. Built with care.</footer>
+        </div></div>`;
+    }
+
+    const projectCards = projects.map((project, index) => `<article class="creative-project-item"><div class="creative-meta"><span>PROJECT ${String(index + 1).padStart(2, '0')}</span><span>SELECTED WORK</span></div><h2>${esc(project.split(/\s*[:|]\s*/, 1)[0])}</h2><p>${esc(project.includes(':') ? project.slice(project.indexOf(':') + 1).trim() : 'A project included in my portfolio.')}</p></article>`).join('') || '<article class="creative-project-item"><div class="creative-meta"><span>PROJECT 01</span><span>SELECTED WORK</span></div><h2>Things I have made.</h2><p>Your project details will appear here.</p></article>';
+    const creativeSkills = skills.map((skill) => `<span class="creative-skill">${esc(skill)}</span>`).join('') || '<span class="creative-skill">Add your skills</span>';
+    const contactItems = [
+        data.email ? `<div class="creative-contact-item"><strong>EMAIL</strong><span>${esc(data.email)}</span></div>` : '',
+        data.phone ? `<div class="creative-contact-item"><strong>PHONE</strong><span>${esc(data.phone)}</span></div>` : '',
+        location ? `<div class="creative-contact-item"><strong>LOCATION</strong><span>${esc(location)}</span></div>` : '',
+        links.length ? `<div class="creative-contact-item"><strong>ELSEWHERE</strong><span>${links.map(esc).join(' · ')}</span></div>` : ''
+    ].filter(Boolean).join('');
+    const nameParts = String(data.name || 'Your Name').trim().split(/\s+/);
+    const firstName = esc(nameParts.shift() || 'Your');
+    const restName = esc(nameParts.join(' '));
+
+    return `<div class="pp pp-cre"><div class="creative-page">
+        <header class="creative-header"><a class="creative-brand" href="#">MYFOLIO <span>/ CREATIVE</span></a><div class="creative-header-links"><span>MY STORY</span><span>CONTACT</span><span>NEW PORTFOLIO</span></div><small>PERSONAL PORTFOLIO <strong>CREATIVE EDITION / 03</strong></small></header>
+        <main class="creative-content">
+            <section class="creative-hero"><div class="creative-hero-copy"><span class="creative-eyebrow">A LITTLE ABOUT ME</span><h1>${firstName}${restName ? `<br><span>${restName}</span>` : ''}</h1><p>${esc(data.about)}</p><div class="creative-footnote"><span>PORTFOLIO NO. {{ str_pad((string) $portfolio->id, 3, '0', STR_PAD_LEFT) }}</span><span>MADE TO BE PERSONAL</span></div></div><div class="creative-hero-art"><b class="creative-art-shape"></b><div class="creative-portrait">${portraitMarkup}</div><span class="creative-art-note">A work in progress, in the best way.</span></div></section>
+            <div class="creative-marquee"><span>✳</span> STAY CURIOUS <span>✳</span> MAKE THINGS <span>✳</span> KEEP LEARNING <span>✳</span> STAY CURIOUS</div>
+            <section class="creative-story-grid"><article class="creative-story-card creative-about"><div class="creative-meta"><span>01 / THE INTRODUCTION</span><span>A LITTLE CONTEXT</span></div><h2>The person behind the projects.</h2><p>${esc(data.about || 'Add a short introduction to tell people who you are and what matters to you.')}</p></article><article class="creative-story-card creative-education"><div class="creative-meta"><span>02 / WHERE I LEARNED</span><span>BACKGROUND</span></div><h2>Learning along the way.</h2><p>${esc(data.education)}</p></article><article class="creative-story-card creative-experience"><div class="creative-meta"><span>03 / WHAT I HAVE DONE</span><span>EXPERIENCE</span></div><h2>Growing with every project.</h2><p>${esc(data.experience)}</p></article><article class="creative-story-card creative-projects"><div class="creative-meta"><span>04 / SELECTED WORK</span><span>PROJECTS</span></div><h2>Things I've made.</h2><div class="creative-project-list">${projectCards}</div></article><article class="creative-story-card creative-skills"><div class="creative-meta"><span>05 / MY TOOLKIT</span><span>SKILLS</span></div><h2>Things I use.</h2><div class="creative-skills-list">${creativeSkills}</div></article><article class="creative-story-card creative-contact"><div class="creative-meta"><span>06 / SAY HELLO</span><span>CONTACT</span></div><h2>Let's keep in touch.</h2><div class="creative-contact-list">${contactItems || '<p>Add your contact details and social links to complete this section.</p>'}</div></article></section>
+            <div class="creative-actions"><div><strong>YOUR PORTFOLIO, READY TO SHARE</strong><p>${esc(portfolioUrl)}</p></div><span>Copy link</span><span>Edit portfolio</span><span class="danger">Delete portfolio</span></div>
+            <footer class="creative-footer"><span>MADE TO BE PERSONAL ✳</span><span>© ${year} ${name}</span></footer>
+        </main></div></div>`;
+}
+
+function openPreview(name){ document.getElementById('pvTitle').textContent=name+' template'; const body=document.getElementById('pvBody'); body.innerHTML=renderTemplate(name,getData()); body.scrollTop=0; document.getElementById('pvChoose').onclick=()=>{closePreview();selectTemplate(name)}; document.getElementById('previewOverlay').classList.add('open'); } function closePreview(){document.getElementById('previewOverlay').classList.remove('open')} addEventListener('keydown',e=>{if(e.key==='Escape')closePreview()});  // ---- Template selection ----
+let selectedTemplate=null; function selectTemplate(name){ selectedTemplate=name; const ids={Simple:'template1',Professional:'template1',Modern:'template2',Creative:'template3'}; document.getElementById('selectedTemplateInput').value=ids[name]||'template1'; document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('selected')); const card=document.getElementById('tpl-'+({Simple:'pro',Professional:'pro',Modern:'mod',Creative:'cre'}[name]||'pro')); if(card) card.classList.add('selected'); document.getElementById('modalDesc').textContent='You selected the '+name+' template. Continue to apply it to your portfolio.'; document.getElementById('selectionModal').classList.add('open'); } function closeModal(){ document.getElementById('selectionModal').classList.remove('open'); document.getElementById('templateSelectionForm').requestSubmit(); }
+// ---- Theme toggle (remembered between visits) ----
+const html=document.documentElement; function setTheme(t){ html.setAttribute('data-theme',t); try{localStorage.setItem('portgen_theme',t)}catch(e){} } let saved='dark'; try{saved=localStorage.getItem('portgen_theme')||'dark'}catch(e){} setTheme(saved);
+ // Theme button handling lives in the shared PortGen navbar partial.
+// ---- Wave canvas ----
 const canvas = document.getElementById('waveCanvas');
-if (!canvas) {
-    console.error('Wave canvas #waveCanvas was not found on the page.');
-} else {
-const ctx = canvas.getContext('2d');
-let waveWidth = 0;
-let waveHeight = 0;
-let mouseX = window.innerWidth / 2;
-let mouseY = window.innerHeight / 2;
-let targetX = mouseX;
-let targetY = mouseY;
-let waveTime = 0;
 
-function resizeCanvas() {
-    const pixelRatio = window.devicePixelRatio || 1;
-    waveWidth = window.innerWidth;
-    waveHeight = window.innerHeight;
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let waveWidth = 0;
+    let waveHeight = 0;
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let targetX = mouseX;
+    let targetY = mouseY;
+    let waveTime = 0;
 
-    canvas.width = Math.floor(waveWidth * pixelRatio);
-    canvas.height = Math.floor(waveHeight * pixelRatio);
-    canvas.style.width = waveWidth + 'px';
-    canvas.style.height = waveHeight + 'px';
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-}
+    function resizeCanvas() {
+        const pixelRatio = window.devicePixelRatio || 1;
 
-window.addEventListener('resize', resizeCanvas);
-window.addEventListener('mousemove', event => {
-    targetX = event.clientX;
-    targetY = event.clientY;
-});
-
-function drawWaves() {
-    mouseX += (targetX - mouseX) * 0.025;
-    mouseY += (targetY - mouseY) * 0.025;
-    ctx.clearRect(0, 0, waveWidth, waveHeight);
-
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-    const waveColor = isLight ? '2, 132, 199' : '56, 189, 248';
-    const lineCount = 30;
-
-    for (let i = 0; i < lineCount; i++) {
-        ctx.beginPath();
-        ctx.lineWidth = i === 15 ? 2.2 : 1.25;
-        ctx.strokeStyle = `rgba(${waveColor}, ${0.32 + (i / lineCount) * 0.48})`;
-
-        const baseY = waveHeight * 0.48 + (i - lineCount / 2) * 10;
-        for (let x = 0; x <= waveWidth; x += 3) {
-            const mouseInfluence = Math.sin((x - mouseX) * 0.002) * ((mouseY - waveHeight / 2) * 0.06);
-            const y = baseY
-                + Math.sin(x * 0.0025 + waveTime + i * 0.12) * 105
-                + Math.sin(x * 0.0015 - waveTime * 0.7) * 55
-                + mouseInfluence;
-
-            if (x === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        }
-        ctx.stroke();
+        waveWidth = window.innerWidth;
+        waveHeight = window.innerHeight;
+        canvas.width = Math.floor(waveWidth * pixelRatio);
+        canvas.height = Math.floor(waveHeight * pixelRatio);
+        canvas.style.width = `${waveWidth}px`;
+        canvas.style.height = `${waveHeight}px`;
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     }
 
-    waveTime += 0.012;
-    requestAnimationFrame(drawWaves);
-}
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('mousemove', event => {
+        targetX = event.clientX;
+        targetY = event.clientY;
+    });
 
-resizeCanvas();
-drawWaves();
+    function drawWaves() {
+        mouseX += (targetX - mouseX) * 0.025;
+        mouseY += (targetY - mouseY) * 0.025;
+        ctx.clearRect(0, 0, waveWidth, waveHeight);
+
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        const waveColor = isLight ? '2, 132, 199' : '56, 189, 248';
+        const lineCount = 30;
+
+        for (let i = 0; i < lineCount; i++) {
+            ctx.beginPath();
+            ctx.lineWidth = i === 15 ? 2.2 : 1.25;
+            ctx.strokeStyle = `rgba(${waveColor}, ${0.32 + (i / lineCount) * 0.48})`;
+
+            const baseY = waveHeight * 0.48 + (i - lineCount / 2) * 10;
+
+            for (let x = 0; x <= waveWidth; x += 3) {
+                const mouseInfluence = Math.sin((x - mouseX) * 0.002)
+                    * ((mouseY - waveHeight / 2) * 0.06);
+                const y = baseY
+                    + Math.sin(x * 0.0025 + waveTime + i * 0.12) * 105
+                    + Math.sin(x * 0.0015 - waveTime * 0.7) * 55
+                    + mouseInfluence;
+
+                if (x === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+
+            ctx.stroke();
+        }
+
+        waveTime += 0.012;
+        window.requestAnimationFrame(drawWaves);
+    }
+
+    resizeCanvas();
+    drawWaves();
 }
 
   </script>

@@ -442,22 +442,7 @@ html.light .action {
         </div>
         <canvas id="bgCanvas">
         </canvas>
-        <header class="content portgen-navbar">
-            <a href="{{ route('portfolio.show', $portfolio->id) }}" class="portgen-logo">
-                PortGen
-            </a>
-
-            <button
-                type="button"
-                id="themeToggleButton"
-                onclick="toggleTheme()"
-                class="portgen-theme-toggle"
-                aria-label="Toggle dark and light mode"
-                title="Toggle dark/light mode"
-            >
-                <i id="themeIcon" class="fa-regular fa-sun" aria-hidden="true"></i>
-            </button>
-        </header>
+        @include('partials.portgen-navbar', ['sticky' => false])
     <main class="content w-full max-w-5xl mx-auto my-10 flex-1">
         <div class="mb-8">
             <p class="text-xs uppercase tracking-[.25em] text-indigo-400 font-bold mb-3">Portfolio Studio / Edit</p>
@@ -550,18 +535,15 @@ html.light .action {
             </main>
             <footer class="content w-full max-w-5xl mx-auto py-4 text-xs" style="color:var(--sub)">PortGen · Portfolio Template Generator</footer>
 <script>
-let isDarkMode = !document.documentElement.classList.contains('light');
-
-function toggleTheme() {
-    isDarkMode = !isDarkMode;
-    document.documentElement.classList.toggle('dark', isDarkMode);
-    document.documentElement.classList.toggle('light', !isDarkMode);
-
-    const themeIcon = document.getElementById('themeIcon');
-    if (themeIcon) {
-        themeIcon.className = isDarkMode ? 'fa-regular fa-sun' : 'fa-regular fa-moon';
-    }
-}
+// Theme state is shared by the navbar across all PortGen pages.
+const savedEditTheme = (() => {
+    try { return localStorage.getItem('portgen_theme') || 'dark'; }
+    catch (error) { return 'dark'; }
+})();
+document.documentElement.setAttribute('data-theme', savedEditTheme);
+document.body.setAttribute('data-theme', savedEditTheme);
+document.documentElement.classList.toggle('dark', savedEditTheme === 'dark');
+document.documentElement.classList.toggle('light', savedEditTheme === 'light');
 
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
